@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AI Form Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body>
+
+    <h1>AI Form Analyzer</h1>
+
+    <p class="subtitle">
+        Squat Form Analysis
+    </p>
+
+
+    <!-- =====================================================
+         VIDEO UPLOAD
+         ===================================================== -->
+
+    <div class="upload-section">
+
+        <input
+            type="file"
+            id="videoInput"
+            accept="video/*"
+        >
+
+    </div>
+
+
+    <!-- =====================================================
+         VIDEO + POSE CANVAS
+         ===================================================== -->
+
+    <div class="container">
+
+        <video
+            id="video"
+            controls
+            playsinline
+        ></video>
+
+        <canvas
+            id="canvas"
+        ></canvas>
+
+    </div>
+
+
+    <!-- =====================================================
+         JOINT ANGLES
+         ===================================================== -->
+
+    <div id="angles">
+
+        <h2>Joint Angles</h2>
+
+
+        <div class="angle-grid">
+
+            <div class="angle-card">
+
+                <span class="label">
+                    Left Knee
+                </span>
+
+                <span
+                    id="leftKnee"
+                    class="value"
+                >
+                    0
+                </span>
+
+                <span class="degree">
+                    °
+                </span>
+
+            </div>
+
+
+            <div class="angle-card">
+
+                <span class="label">
+                    Right Knee
+                </span>
+
+                <span
+                    id="rightKnee"
+                    class="value"
+                >
+                    0
+                </span>
+
+                <span class="degree">
+                    °
+                </span>
+
+            </div>
+
+
+            <div class="angle-card">
+
+                <span class="label">
+                    Left Hip
+                </span>
+
+                <span
+                    id="leftHip"
+                    class="value"
+                >
+                    0
+                </span>
+
+                <span class="degree">
+                    °
+                </span>
+
+            </div>
+
+
+            <div class="angle-card">
+
+                <span class="label">
+                    Right Hip
+                </span>
+
+                <span
+                    id="rightHip"
+                    class="value"
+                >
+                    0
+                </span>
+
+                <span class="degree">
+                    °
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ONLY ONE JAVASCRIPT ENTRY POINT
+         ===================================================== -->
+
+    <script
+        type="module"
+        src="script.js"
+    ></script>
+
+</body>
+
+</html>
