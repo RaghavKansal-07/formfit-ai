@@ -2,170 +2,1014 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <title>FormFit AI | AI Fitness Intelligence</title>
 
-    <title>AI Form Analyzer</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
-
+    <link rel="stylesheet" href="style.css">
 </head>
-
 
 <body>
 
-    <h1>AI Form Analyzer</h1>
+    <!-- =========================================================
+         NAVIGATION
+    ========================================================== -->
 
-    <p class="subtitle">
-        Squat Form Analysis
-    </p>
+    <header class="site-header">
 
+        <nav class="navbar">
 
-    <!-- =====================================================
-         VIDEO UPLOAD
-         ===================================================== -->
+            <a href="index.html" class="brand">
+                <span class="brand-mark">F</span>
 
-    <div class="upload-section">
-
-        <input
-            type="file"
-            id="videoInput"
-            accept="video/*"
-        >
-
-    </div>
-
-
-    <!-- =====================================================
-         VIDEO + POSE CANVAS
-         ===================================================== -->
-
-    <div class="container">
-
-        <video
-            id="video"
-            controls
-            playsinline
-        ></video>
-
-        <canvas
-            id="canvas"
-        ></canvas>
-
-    </div>
-
-
-    <!-- =====================================================
-         JOINT ANGLES
-         ===================================================== -->
-
-    <div id="angles">
-
-        <h2>Joint Angles</h2>
-
-
-        <div class="angle-grid">
-
-            <div class="angle-card">
-
-                <span class="label">
-                    Left Knee
+                <span class="brand-text">
+                    <strong>FormFit</strong>
+                    <span>AI</span>
                 </span>
+            </a>
 
-                <span
-                    id="leftKnee"
-                    class="value"
-                >
-                    0
-                </span>
+            <div class="nav-links">
+                <a href="#analyzer">Analyzer</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#exercises">Exercises</a>
+                <a href="history.html">History</a>
+            </div>
 
-                <span class="degree">
-                    °
-                </span>
+            <a href="#analyzer" class="nav-cta">
+                Analyze Form
+                <span>→</span>
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================================================
+         MAIN CONTENT
+    ========================================================== -->
+
+    <main>
+
+
+        <!-- =====================================================
+             HERO
+        ====================================================== -->
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="eyebrow">
+                    AI FITNESS INTELLIGENCE
+                </p>
+
+                <h1>
+                    Your Form Has a Story.
+                    <em>AI Can Read It.</em>
+                </h1>
+
+                <p class="hero-description">
+                    Upload your exercise video and let FormFit AI
+                    analyze your movement, repetitions, range of
+                    motion, stability, posture, and tempo.
+                </p>
+
+                <div class="hero-actions">
+
+                    <a href="#analyzer" class="button button-primary">
+                        Analyze My Form
+                        <span>→</span>
+                    </a>
+
+                    <a href="#how-it-works" class="button button-secondary">
+                        See How It Works
+                    </a>
+
+                </div>
 
             </div>
 
 
-            <div class="angle-card">
+            <!-- HERO VISUAL -->
 
-                <span class="label">
-                    Right Knee
-                </span>
+            <div class="hero-visual">
 
-                <span
-                    id="rightKnee"
-                    class="value"
-                >
-                    0
-                </span>
+                <div class="hero-athlete">
 
-                <span class="degree">
-                    °
-                </span>
+                    <div class="athlete-placeholder">
+                        <span>AI</span>
+                    </div>
+
+                    <!-- Pose-analysis overlay -->
+
+                    <div class="pose-line pose-line-shoulder"></div>
+                    <div class="pose-line pose-line-torso"></div>
+                    <div class="pose-line pose-line-leg"></div>
+
+                    <div class="pose-point point-shoulder"></div>
+                    <div class="pose-point point-elbow"></div>
+                    <div class="pose-point point-hip"></div>
+                    <div class="pose-point point-knee"></div>
+
+                </div>
+
+
+                <!-- Floating AI cards -->
+
+                <div class="floating-card score-card">
+
+                    <span class="floating-label">
+                        FORM SCORE
+                    </span>
+
+                    <strong>96</strong>
+
+                    <span class="score-good">
+                        Excellent
+                    </span>
+
+                </div>
+
+
+                <div class="floating-card hero-angle-card">
+
+                    <span>Knee Angle</span>
+                    <strong>82°</strong>
+
+                </div>
+
+
+                <div class="floating-card feedback-card">
+
+                    <span class="floating-label">
+                        AI COACH
+                    </span>
+
+                    <p>
+                        Great depth. Keep your chest
+                        slightly more upright.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             ANALYZER
+        ====================================================== -->
+
+        <section id="analyzer" class="analyzer-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">
+                        AI MOVEMENT ANALYSIS
+                    </p>
+
+                    <h2>
+                        See Your Movement
+                        <em>Through AI.</em>
+                    </h2>
+                </div>
+
+                <p class="section-description">
+                    Choose an exercise, upload your video,
+                    and let FormFit AI understand your movement.
+                </p>
 
             </div>
 
 
-            <div class="angle-card">
+            <!-- EXERCISE SELECTOR -->
 
-                <span class="label">
-                    Left Hip
-                </span>
+            <div class="exercise-selector">
 
-                <span
-                    id="leftHip"
-                    class="value"
-                >
-                    0
-                </span>
+                <div class="selector-heading">
 
-                <span class="degree">
-                    °
-                </span>
+                    <span>
+                        01
+                    </span>
+
+                    <div>
+                        <h3>Select Exercise</h3>
+                        <p>
+                            Choose what you want FormFit AI
+                            to analyze.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="exercise-grid">
+
+                    <button type="button" class="exercise-card is-selected" data-exercise="squat">
+
+                        <div class="exercise-image squat-image">
+                            <span>AI POSE</span>
+                        </div>
+
+                        <div class="exercise-info">
+
+                            <div>
+                                <h4>Squat</h4>
+
+                                <p>
+                                    Lower Body · AI Analysis
+                                </p>
+                            </div>
+
+                            <span class="exercise-arrow">
+                                →
+                            </span>
+
+                        </div>
+
+                    </button>
+
+
+                    <button type="button" class="exercise-card" data-exercise="bicep-curl">
+
+                        <div class="exercise-image curl-image">
+                            <span>AI POSE</span>
+                        </div>
+
+                        <div class="exercise-info">
+
+                            <div>
+                                <h4>Bicep Curl</h4>
+
+                                <p>
+                                    Upper Body · AI Analysis
+                                </p>
+                            </div>
+
+                            <span class="exercise-arrow">
+                                →
+                            </span>
+
+                        </div>
+
+                    </button>
+
+                </div>
 
             </div>
 
 
-            <div class="angle-card">
+            <!-- UPLOAD WORKSPACE -->
 
-                <span class="label">
-                    Right Hip
-                </span>
+            <div class="analyzer-workspace">
 
-                <span
-                    id="rightHip"
-                    class="value"
-                >
-                    0
-                </span>
+                <div class="workspace-heading">
 
-                <span class="degree">
-                    °
-                </span>
+                    <div class="workspace-step">
+                        <span>02</span>
+
+                        <div>
+                            <h3>Upload Your Video</h3>
+
+                            <p>
+                                Record from a clear side view
+                                for the most reliable analysis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <span id="selectedExerciseLabel" class="selected-exercise-label">
+                        Squat selected
+                    </span>
+
+                </div>
+
+
+                <!-- Upload area -->
+
+                <div class="upload-area" id="uploadArea">
+
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+
+                    <h3>
+                        Drop your workout video here
+                    </h3>
+
+                    <p>
+                        or choose a video from your device
+                    </p>
+
+                    <label for="videoInput" class="button button-primary upload-button">
+                        Choose Video
+                    </label>
+
+                    <!-- REQUIRED BY EXISTING SCRIPT -->
+
+                    <input type="file" id="videoInput" accept="video/*" hidden>
+
+                    <div class="upload-guidance">
+
+                        <span>MP4 / WebM</span>
+                        <span>·</span>
+                        <span>Side view recommended</span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Video analysis area -->
+
+                <div class="video-analysis-container">
+
+                    <div class="video-header">
+
+                        <div>
+                            <span class="status-dot"></span>
+
+                            <span id="analysisStatus">
+                                Ready for analysis
+                            </span>
+                        </div>
+
+                        <span id="currentExerciseLabel" class="current-exercise">
+                            Squat
+                        </span>
+
+                    </div>
+
+
+                    <div class="video-stage">
+
+                        <!-- REQUIRED BY EXISTING SCRIPT -->
+
+                        <video id="video" controls playsinline></video>
+
+                        <!-- REQUIRED BY EXISTING SCRIPT -->
+
+                        <canvas id="canvas"></canvas>
+
+
+                        <!-- Empty state -->
+
+                        <div id="videoEmptyState" class="video-empty-state">
+
+                            <div class="empty-ai-icon">
+                                ✦
+                            </div>
+
+                            <h3>
+                                Your AI analysis starts here
+                            </h3>
+
+                            <p>
+                                Upload an exercise video to
+                                visualize your movement and
+                                receive form feedback.
+                            </p>
+
+                        </div>
+
+
+                        <!-- Processing overlay -->
+
+                        <div id="processingOverlay" class="processing-overlay">
+
+                            <div class="processing-content">
+
+                                <div class="processing-ring"></div>
+
+                                <p class="processing-title">
+                                    Analyzing Movement
+                                </p>
+
+                                <p id="processingStage" class="processing-stage">
+                                    Detecting pose
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         ANALYSIS METRICS
+                    ================================================== -->
+
+                    <div class="metrics-strip">
+
+                        <div class="metric">
+
+                            <span class="metric-label">
+                                REPS
+                            </span>
+
+                            <strong id="repCount">
+                                0
+                            </strong>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <span class="metric-label">
+                                FORM SCORE
+                            </span>
+
+                            <strong id="formScore">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <span class="metric-label">
+                                RANGE OF MOTION
+                            </span>
+
+                            <strong id="rangeOfMotion">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="metric">
+
+                            <span class="metric-label">
+                                TEMPO
+                            </span>
+
+                            <strong id="tempo">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+     AI FEEDBACK
+================================================== -->
+
+                    <div id="analysisFeedback" class="analysis-feedback" aria-live="polite">
+
+                        <div class="analysis-feedback-header">
+
+                            <div>
+                                <span class="analysis-feedback-label">
+                                    AI COACH
+                                </span>
+
+                                <h3>
+                                    Form Insights
+                                </h3>
+                            </div>
+
+                        </div>
+
+                        <div id="analysisFeedbackText" class="analysis-feedback-list">
+                            <div class="analysis-feedback-item">
+                                Upload a workout video to receive form feedback.
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
+
+
+            <!-- =====================================================
+                 JOINT METRICS
+            ====================================================== -->
+
+            <section id="angles" class="joint-analysis">
+
+                <div class="section-mini-heading">
+
+                    <div>
+                        <span class="eyebrow">
+                            LIVE BIOMECHANICS
+                        </span>
+
+                        <h3>
+                            Joint Angles
+                        </h3>
+                    </div>
+
+                    <span class="analysis-badge">
+                        AI TRACKING
+                    </span>
+
+                </div>
+
+
+                <div class="angle-grid">
+
+                    <div class="angle-card">
+
+                        <span class="label">
+                            Left Knee
+                        </span>
+
+                        <strong id="leftKnee" class="value">
+                            0
+                        </strong>
+
+                        <span class="degree">
+                            °
+                        </span>
+
+                    </div>
+
+
+                    <div class="angle-card">
+
+                        <span class="label">
+                            Right Knee
+                        </span>
+
+                        <strong id="rightKnee" class="value">
+                            0
+                        </strong>
+
+                        <span class="degree">
+                            °
+                        </span>
+
+                    </div>
+
+
+                    <div class="angle-card">
+
+                        <span class="label">
+                            Left Hip
+                        </span>
+
+                        <strong id="leftHip" class="value">
+                            0
+                        </strong>
+
+                        <span class="degree">
+                            °
+                        </span>
+
+                    </div>
+
+
+                    <div class="angle-card">
+
+                        <span class="label">
+                            Right Hip
+                        </span>
+
+                        <strong id="rightHip" class="value">
+                            0
+                        </strong>
+
+                        <span class="degree">
+                            °
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+
+        <!-- =====================================================
+             WHAT FORMFIT AI UNDERSTANDS
+        ====================================================== -->
+
+        <section class="understands-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">
+                        MOVEMENT INTELLIGENCE
+                    </p>
+
+                    <h2>
+                        FormFit AI Looks
+                        <em>Beyond Reps.</em>
+                    </h2>
+                </div>
+
+                <p class="section-description">
+                    Every repetition contains information about
+                    how you move. FormFit AI turns that movement
+                    into understandable feedback.
+                </p>
+
+            </div>
+
+
+            <div class="understanding-grid">
+
+                <article class="understanding-card">
+
+                    <span class="card-number">01</span>
+
+                    <h3>
+                        Range of Motion
+                    </h3>
+
+                    <p>
+                        Understand how deeply or fully you move
+                        through each repetition.
+                    </p>
+
+                </article>
+
+
+                <article class="understanding-card">
+
+                    <span class="card-number">02</span>
+
+                    <h3>
+                        Stability
+                    </h3>
+
+                    <p>
+                        Track movement consistency and unwanted
+                        joint or body displacement.
+                    </p>
+
+                </article>
+
+
+                <article class="understanding-card">
+
+                    <span class="card-number">03</span>
+
+                    <h3>
+                        Posture
+                    </h3>
+
+                    <p>
+                        Examine body alignment throughout
+                        the movement.
+                    </p>
+
+                </article>
+
+
+                <article class="understanding-card">
+
+                    <span class="card-number">04</span>
+
+                    <h3>
+                        Tempo
+                    </h3>
+
+                    <p>
+                        See how your movement speed changes
+                        throughout each repetition.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             SUPPORTED EXERCISES
+        ====================================================== -->
+
+        <section id="exercises" class="exercises-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="eyebrow">
+                        SUPPORTED MOVEMENTS
+                    </p>
+
+                    <h2>
+                        Train. Record.
+                        <em>Understand.</em>
+                    </h2>
+                </div>
+
+            </div>
+
+
+            <div class="supported-exercises">
+
+                <div class="supported-exercise">
+
+                    <span class="exercise-category">
+                        LOWER BODY
+                    </span>
+
+                    <h3>Squat</h3>
+
+                    <p>
+                        Analyze depth, posture, stability,
+                        and repetition quality.
+                    </p>
+
+                    <span class="supported-status">
+                        Available
+                    </span>
+
+                </div>
+
+
+                <div class="supported-exercise">
+
+                    <span class="exercise-category">
+                        UPPER BODY
+                    </span>
+
+                    <h3>Bicep Curl</h3>
+
+                    <p>
+                        Analyze range of motion, elbow stability,
+                        posture, and tempo.
+                    </p>
+
+                    <span class="supported-status">
+                        Available
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             HOW IT WORKS
+        ====================================================== -->
+
+        <section id="how-it-works" class="how-section">
+
+            <div class="section-heading centered">
+
+                <p class="eyebrow">
+                    HOW IT WORKS
+                </p>
+
+                <h2>
+                    From Video to
+                    <em>Useful Feedback.</em>
+                </h2>
+
+            </div>
+
+
+            <div class="workflow">
+
+                <article class="workflow-step">
+
+                    <span class="workflow-number">
+                        01
+                    </span>
+
+                    <h3>
+                        Choose
+                    </h3>
+
+                    <p>
+                        Select the exercise you want
+                        FormFit AI to analyze.
+                    </p>
+
+                </article>
+
+
+                <article class="workflow-step">
+
+                    <span class="workflow-number">
+                        02
+                    </span>
+
+                    <h3>
+                        Record
+                    </h3>
+
+                    <p>
+                        Upload a clear video showing
+                        your movement.
+                    </p>
+
+                </article>
+
+
+                <article class="workflow-step">
+
+                    <span class="workflow-number">
+                        03
+                    </span>
+
+                    <h3>
+                        Analyze
+                    </h3>
+
+                    <p>
+                        AI tracks your pose and identifies
+                        your repetitions.
+                    </p>
+
+                </article>
+
+
+                <article class="workflow-step">
+
+                    <span class="workflow-number">
+                        04
+                    </span>
+
+                    <h3>
+                        Improve
+                    </h3>
+
+                    <p>
+                        Receive form insights and actionable
+                        coaching feedback.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PROGRESS
+        ====================================================== -->
+
+        <section class="progress-section">
+
+            <div class="progress-content">
+
+                <p class="eyebrow">
+                    YOUR PROGRESS
+                </p>
+
+                <h2>
+                    Your workouts should
+                    <em>teach you something.</em>
+                </h2>
+
+                <p>
+                    FormFit AI keeps your workout history so
+                    you can look back at your sessions and
+                    understand how your movement changes over time.
+                </p>
+
+                <a href="history.html" class="button button-secondary">
+                    View Workout History
+                    <span>→</span>
+                </a>
+
+            </div>
+
+            <div class="progress-visual">
+
+                <div class="progress-card">
+
+                    <span>
+                        FORM SCORE
+                    </span>
+
+                    <strong>
+                        94
+                    </strong>
+
+                    <small>
+                        Current session
+                    </small>
+
+                </div>
+
+                <div class="progress-card progress-card-small">
+
+                    <span>
+                        REPS
+                    </span>
+
+                    <strong>
+                        12
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             FINAL CTA
+        ====================================================== -->
+
+        <section class="final-cta">
+
+            <p class="eyebrow">
+                FORM · INTELLIGENCE · PROGRESS
+            </p>
+
+            <h2>
+                Train with more
+                <em>awareness.</em>
+            </h2>
+
+            <p>
+                Let AI turn your movement into information
+                you can actually use.
+            </p>
+
+            <a href="#analyzer" class="button button-primary">
+                Analyze My Form
+                <span>→</span>
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+
+    <footer class="site-footer">
+
+        <div class="footer-brand">
+
+            <a href="index.html" class="brand">
+                <span class="brand-mark">F</span>
+
+                <span class="brand-text">
+                    <strong>FormFit</strong>
+                    <span>AI</span>
+                </span>
+            </a>
+
+            <p>
+                AI Fitness Intelligence.
+            </p>
 
         </div>
 
-    </div>
+
+        <div class="footer-links">
+
+            <a href="#analyzer">
+                Analyzer
+            </a>
+
+            <a href="#how-it-works">
+                How It Works
+            </a>
+
+            <a href="#exercises">
+                Exercises
+            </a>
+
+            <a href="history.html">
+                History
+            </a>
+
+        </div>
 
 
-    <!-- =====================================================
-         ONLY ONE JAVASCRIPT ENTRY POINT
-         ===================================================== -->
+        <p class="footer-copy">
+            © 2026 FormFit AI
+        </p>
 
-    <script
-        type="module"
-        src="script.js"
-    ></script>
+    </footer>
+
+
+    <!-- =========================================================
+         APPLICATION SCRIPT
+    ========================================================== -->
+
+    <script type="module" src="script.js"></script>
 
 </body>
 

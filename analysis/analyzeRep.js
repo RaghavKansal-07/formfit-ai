@@ -1750,6 +1750,27 @@ export function analyzeRep(rep, frames) {
         );
     }
 
+    // ============================================================
+    // RANGE OF MOTION
+    // ============================================================
+
+    const validKneeAngles =
+        measurements
+            .map(
+                (measurement) =>
+                    Number(measurement.kneeAngle)
+            )
+            .filter(
+                (angle) =>
+                    Number.isFinite(angle)
+            );
+
+    const rangeOfMotion =
+        validKneeAngles.length >= 2
+            ? Math.max(...validKneeAngles) -
+            Math.min(...validKneeAngles)
+            : null;
+
 
     // ========================================================
     // 29. RETURN RESULT
@@ -1827,6 +1848,11 @@ export function analyzeRep(rep, frames) {
         primaryKneeAngle:
             Number.isFinite(primaryKneeAngle)
                 ? primaryKneeAngle
+                : null,
+
+        rangeOfMotion:
+            Number.isFinite(rangeOfMotion)
+                ? rangeOfMotion
                 : null,
 
 

@@ -37,6 +37,21 @@ let lastVideoTime = -1;
 let isProcessingVideo = false;
 let isVideoAnalysisComplete = false;
 
+// ============================================================
+// EXERCISE SELECTION
+// ============================================================
+
+let selectedExercise = "squat";
+
+
+export function getSelectedExercise() {
+    return selectedExercise;
+}
+
+export function setSelectedExercise(value) {
+    selectedExercise = value;
+}
+
 
 // ============================================================
 // POSE HISTORY

@@ -62,10 +62,6 @@ import {
 } from "./analysis/analyzeBicepCurlRep.js";
 
 
-// ============================================================
-// TEMPORARY EXERCISE SELECTION
-// ============================================================
-//
 // IMPORTANT
 // ------------------------------------------------------------
 // This is temporary.
@@ -86,7 +82,6 @@ import {
 // when testing the curl detector.
 // ============================================================
 
-const SELECTED_EXERCISE = "bicep-curl";
 
 
 // ============================================================
@@ -95,6 +90,8 @@ const SELECTED_EXERCISE = "bicep-curl";
 
 import {
     getPoseHistory,
+    getSelectedExercise,
+    setSelectedExercise,
 
     setVideo,
     setCanvas,
@@ -132,6 +129,353 @@ const video =
 const canvas =
     document.getElementById("canvas");
 
+// ============================================================
+// CANVAS / VIDEO ALIGNMENT
+// ============================================================
+
+function syncCanvasToVideo() {
+    const videoStage =
+        video.closest(".video-stage");
+
+    if (!videoStage || !video.videoWidth || !video.videoHeight) {
+        return;
+    }
+
+    const videoRect =
+        video.getBoundingClientRect();
+
+    const stageRect =
+        videoStage.getBoundingClientRect();
+
+    canvas.style.left =
+        `${videoRect.left - stageRect.left}px`;
+
+    canvas.style.top =
+        `${videoRect.top - stageRect.top}px`;
+
+    canvas.style.width =
+        `${videoRect.width}px`;
+
+    canvas.style.height =
+        `${videoRect.height}px`;
+}
+
+window.addEventListener(
+    "resize",
+    syncCanvasToVideo
+);
+
+const exerciseCards =
+    document.querySelectorAll(".exercise-card");
+
+const selectedExerciseLabel =
+    document.getElementById("selectedExerciseLabel");
+
+const currentExerciseLabel =
+    document.getElementById("currentExerciseLabel");
+
+const repCountElement =
+    document.getElementById("repCount");
+
+const formScoreElement =
+    document.getElementById("formScore");
+
+const rangeOfMotionElement =
+    document.getElementById("rangeOfMotion");
+
+const tempoElement =
+    document.getElementById("tempo");
+
+const analysisFeedbackText =
+    document.getElementById("analysisFeedbackText");
+
+// ============================================================
+// UPDATE ANALYZER METRICS
+// ============================================================
+
+function updateAnalyzerMetrics(analyzedReps) {
+
+    if (
+        !Array.isArray(analyzedReps) ||
+        analyzedReps.length === 0
+    ) {
+
+        if (repCountElement) {
+            repCountElement.textContent = "0";
+        }
+
+        if (formScoreElement) {
+            formScoreElement.textContent = "—";
+        }
+
+        if (rangeOfMotionElement) {
+            rangeOfMotionElement.textContent = "—";
+        }
+
+        if (tempoElement) {
+            tempoElement.textContent = "—";
+        }
+
+        if (analysisFeedbackText) {
+
+            analysisFeedbackText.innerHTML = "";
+
+            const feedbackItem =
+                document.createElement("div");
+
+            feedbackItem.className =
+                "analysis-feedback-item";
+
+            feedbackItem.textContent =
+                "Upload a workout video to receive form feedback.";
+
+            analysisFeedbackText.appendChild(
+                feedbackItem
+            );
+        }
+
+        return;
+    }
+
+
+    // --------------------------------------------------------
+    // REP COUNT
+    // --------------------------------------------------------
+
+    const repCount =
+        analyzedReps.length;
+
+
+    // --------------------------------------------------------
+    // AVERAGE FORM SCORE
+    // --------------------------------------------------------
+
+    const formScores =
+        analyzedReps
+            .map(
+                (rep) =>
+                    Number(rep.formScore)
+            )
+            .filter(
+                (score) =>
+                    Number.isFinite(score)
+            );
+
+
+    const averageFormScore =
+        formScores.length > 0
+            ? formScores.reduce(
+                (sum, score) =>
+                    sum + score,
+                0
+            ) / formScores.length
+            : null;
+
+
+    // --------------------------------------------------------
+    // UPDATE REP COUNT
+    // --------------------------------------------------------
+
+    if (repCountElement) {
+        repCountElement.textContent =
+            repCount;
+    }
+
+
+    // --------------------------------------------------------
+    // UPDATE FORM SCORE
+    // --------------------------------------------------------
+
+    if (formScoreElement) {
+
+        formScoreElement.textContent =
+            averageFormScore !== null
+                ? averageFormScore.toFixed(1)
+                : "—";
+    }
+
+
+    // --------------------------------------------------------
+    // RANGE OF MOTION
+    // --------------------------------------------------------
+
+    const rangeOfMotionValues =
+        analyzedReps
+            .map(
+                (rep) =>
+                    Number(rep.rangeOfMotion)
+            )
+            .filter(
+                (value) =>
+                    Number.isFinite(value)
+            );
+
+    const averageRangeOfMotion =
+        rangeOfMotionValues.length > 0
+            ? rangeOfMotionValues.reduce(
+                (sum, value) =>
+                    sum + value,
+                0
+            ) / rangeOfMotionValues.length
+            : null;
+
+    if (rangeOfMotionElement) {
+        rangeOfMotionElement.textContent =
+            averageRangeOfMotion !== null
+                ? `${averageRangeOfMotion.toFixed(1)}°`
+                : "—";
+    }
+
+
+    // ============================================================
+    // TEMPO
+    // ============================================================
+
+    const durationValues =
+        analyzedReps
+            .map(
+                (rep) =>
+                    Number(rep.duration)
+            )
+            .filter(
+                (value) =>
+                    Number.isFinite(value)
+            );
+
+    const averageDuration =
+        durationValues.length > 0
+            ? durationValues.reduce(
+                (sum, value) =>
+                    sum + value,
+                0
+            ) / durationValues.length
+            : null;
+
+    if (tempoElement) {
+        tempoElement.textContent =
+            averageDuration !== null
+                ? `${averageDuration.toFixed(1)}s`
+                : "—";
+    }
+
+    // ============================================================
+    // AI FEEDBACK
+    // ============================================================
+
+    // ============================================================
+    // AI FEEDBACK
+    // ============================================================
+
+    const feedbackItems =
+        analyzedReps
+            .flatMap(
+                (rep) =>
+                    Array.isArray(rep.feedback)
+                        ? rep.feedback
+                        : []
+            )
+            .filter(
+                (feedback) =>
+                    typeof feedback === "string" &&
+                    feedback.trim().length > 0
+            );
+
+    const uniqueFeedback =
+        [...new Set(feedbackItems)];
+
+    if (analysisFeedbackText) {
+
+        analysisFeedbackText.innerHTML = "";
+
+        if (uniqueFeedback.length > 0) {
+
+            uniqueFeedback.forEach((feedback) => {
+
+                const feedbackItem =
+                    document.createElement("div");
+
+                const normalizedFeedback =
+                    feedback.toLowerCase();
+
+                const isPositive =
+                    normalizedFeedback.startsWith("good ") ||
+                    normalizedFeedback.includes("good squat mechanics");
+
+                feedbackItem.className =
+                    isPositive
+                        ? "analysis-feedback-item is-positive"
+                        : "analysis-feedback-item is-correction";
+
+                feedbackItem.textContent =
+                    feedback;
+
+                analysisFeedbackText.appendChild(
+                    feedbackItem
+                );
+
+            });
+
+        } else {
+
+            const feedbackItem =
+                document.createElement("div");
+
+            feedbackItem.className =
+                "analysis-feedback-item";
+
+            feedbackItem.textContent =
+                "No specific form feedback available.";
+
+            analysisFeedbackText.appendChild(
+                feedbackItem
+            );
+
+        }
+    }
+}
+
+
+// ============================================================
+// EXERCISE SELECTION
+// ============================================================
+
+exerciseCards.forEach((card) => {
+    card.addEventListener("click", () => {
+        const exercise = card.dataset.exercise;
+
+        if (!exercise) {
+            return;
+        }
+
+        setSelectedExercise(exercise);
+
+        exerciseCards.forEach((item) => {
+            item.classList.remove("is-selected");
+        });
+
+        card.classList.add("is-selected");
+
+        const exerciseName =
+            exercise === "bicep-curl"
+                ? "Bicep Curl"
+                : "Squat";
+
+        if (selectedExerciseLabel) {
+            selectedExerciseLabel.textContent =
+                `${exerciseName} selected`;
+        }
+
+        if (currentExerciseLabel) {
+            currentExerciseLabel.textContent =
+                exerciseName;
+        }
+
+        console.log(
+            "Exercise selected:",
+            getSelectedExercise()
+        );
+    });
+});
 
 // ============================================================
 // BASIC VALIDATION
@@ -229,7 +573,7 @@ async function initializeApplication() {
 
         console.log(
             "Selected exercise:",
-            SELECTED_EXERCISE
+            getSelectedExercise()
         );
 
 
@@ -301,7 +645,7 @@ videoInput.addEventListener(
 
         console.log(
             "Exercise:",
-            SELECTED_EXERCISE
+            getSelectedExercise()
         );
 
 
@@ -446,6 +790,8 @@ videoInput.addEventListener(
 
                 canvas.height =
                     video.videoHeight;
+
+                syncCanvasToVideo();
 
 
                 // ------------------------------------------------
@@ -600,7 +946,7 @@ video.addEventListener(
 
         console.log(
             "Exercise:",
-            SELECTED_EXERCISE
+            getSelectedExercise()
         );
 
 
@@ -670,7 +1016,7 @@ video.addEventListener(
         // ====================================================
 
         if (
-            SELECTED_EXERCISE === "squat"
+            getSelectedExercise() === "squat"
         ) {
 
             console.log(
@@ -904,6 +1250,8 @@ video.addEventListener(
             setAnalyzedReps(
                 analyzedReps
             );
+
+            updateAnalyzerMetrics(analyzedReps);
 
 
             // ==================================================
@@ -1305,7 +1653,7 @@ video.addEventListener(
         // ====================================================
 
         if (
-            SELECTED_EXERCISE === "bicep-curl"
+            getSelectedExercise() === "bicep-curl"
         ) {
 
             console.log(
@@ -1867,7 +2215,7 @@ video.addEventListener(
 
         console.error(
             "Unknown exercise:",
-            SELECTED_EXERCISE
+            getSelectedExercise()
         );
 
 
