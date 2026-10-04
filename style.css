@@ -813,17 +813,162 @@ section {
 
 /* Temporary visual areas */
 
+/* Premium exercise visual areas */
+
 .exercise-image {
-    min-height: 210px;
+
+    position: relative;
+
+    min-height: 230px;
 
     display: grid;
+
     place-items: center;
 
-    color: rgba(12, 44, 71, 0.20);
+    overflow: hidden;
 
-    font-family: Georgia, serif;
+    color: rgba(12, 44, 71, 0.28);
+
+    font-family: var(--font-serif);
+
     font-size: 28px;
+
     font-weight: 700;
+
+    isolation: isolate;
+
+}
+
+
+/* Subtle technical grid */
+
+.exercise-image::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: -2;
+
+    background-image:
+        linear-gradient(
+            rgba(12, 44, 71, 0.055) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(12, 44, 71, 0.055) 1px,
+            transparent 1px
+        );
+
+    background-size: 28px 28px;
+
+    opacity: 0.7;
+
+}
+
+
+/* Soft AI glow */
+
+.exercise-image::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+
+    height: 180px;
+
+    border-radius: 50%;
+
+    z-index: -1;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(151, 211, 205, 0.45) 0%,
+            rgba(151, 211, 205, 0.12) 42%,
+            transparent 72%
+        );
+
+    filter: blur(2px);
+
+}
+
+
+/* Squat visual */
+
+.squat-image {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(228, 242, 234, 0.98),
+            rgba(151, 211, 205, 0.32)
+        );
+
+}
+
+
+/* Bicep curl visual */
+
+.curl-image {
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(239, 234, 230, 0.98),
+            rgba(226, 165, 77, 0.18)
+        );
+
+}
+
+.curl-image::after {
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(226, 165, 77, 0.30) 0%,
+            rgba(226, 165, 77, 0.08) 42%,
+            transparent 72%
+        );
+
+}
+
+
+/* AI POSE label */
+
+.exercise-image span {
+
+    position: relative;
+
+    z-index: 1;
+
+    padding: 9px 14px;
+
+    border: 1px solid rgba(12, 44, 71, 0.12);
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.38);
+
+    backdrop-filter: blur(8px);
+
+    color: rgba(12, 44, 71, 0.42);
+
+    font-family: var(--font-sans);
+
+    font-size: 9px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.18em;
+
+    text-transform: uppercase;
+
 }
 
 .squat-image {
