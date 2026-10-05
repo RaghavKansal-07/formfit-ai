@@ -20,7 +20,7 @@
 
         <nav class="navbar">
 
-            <a href="index.html" class="brand">
+            <a href="index.html" class="brand" aria-label="FormFit AI home">
                 <span class="brand-mark">F</span>
 
                 <span class="brand-text">
@@ -29,6 +29,8 @@
                 </span>
             </a>
 
+
+            <!-- Desktop navigation -->
             <div class="nav-links">
                 <a href="#analyzer">Analyzer</a>
                 <a href="#how-it-works">How It Works</a>
@@ -36,12 +38,68 @@
                 <a href="history.html">History</a>
             </div>
 
+
+            <!-- Desktop CTA -->
             <a href="#analyzer" class="nav-cta">
                 Analyze Form
                 <span>→</span>
             </a>
 
+
+            <!-- Mobile menu button -->
+            <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false"
+                aria-controls="mobileNav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
         </nav>
+
+
+        <!-- Mobile navigation -->
+        <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+
+            <div class="mobile-nav-inner">
+
+                <div class="mobile-nav-label">
+                    <span>FORMFIT AI</span>
+                    <small>Movement intelligence</small>
+                </div>
+
+                <div class="mobile-nav-links">
+
+                    <a href="#analyzer">
+                        <span>Analyzer</span>
+                        <span>→</span>
+                    </a>
+
+                    <a href="#how-it-works">
+                        <span>How It Works</span>
+                        <span>→</span>
+                    </a>
+
+                    <a href="#exercises">
+                        <span>Exercises</span>
+                        <span>→</span>
+                    </a>
+
+                    <a href="history.html">
+                        <span>History</span>
+                        <span>→</span>
+                    </a>
+
+                </div>
+
+
+                <a href="#analyzer" class="mobile-nav-cta">
+                    Analyze Your Form
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </div>
 
     </header>
 
