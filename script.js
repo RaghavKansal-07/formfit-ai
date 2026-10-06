@@ -129,6 +129,39 @@ const video =
 const canvas =
     document.getElementById("canvas");
 
+const uploadArea =
+    document.getElementById("uploadArea");
+
+const analysisStatusElement =
+    document.getElementById("analysisStatus");
+
+function updateAnalysisStatusUI(status) {
+
+    if (!analysisStatusElement) {
+        return;
+    }
+
+    const statusMessages = {
+        loading: "Initializing AI",
+        idle: "Ready for analysis",
+        processing: "Processing movement",
+        analyzing: "Analyzing form",
+        complete: "Analysis complete",
+        error: "Analysis error"
+    };
+
+    analysisStatusElement.textContent =
+        statusMessages[status] ??
+        "Ready for analysis";
+}
+
+function updateAnalysisStatus(status) {
+
+    setAnalysisStatus(status);
+
+    updateAnalysisStatusUI(status);
+}
+
 // ============================================================
 // CANVAS / VIDEO ALIGNMENT
 // ============================================================
@@ -577,7 +610,7 @@ async function initializeApplication() {
         );
 
 
-        setAnalysisStatus(
+        updateAnalysisStatus(
             "loading"
         );
 
@@ -585,7 +618,7 @@ async function initializeApplication() {
         await initializePoseLandmarker();
 
 
-        setAnalysisStatus(
+        updateAnalysisStatus(
             "idle"
         );
 
@@ -598,7 +631,7 @@ async function initializeApplication() {
 
     catch (error) {
 
-        setAnalysisStatus(
+        updateAnalysisStatus(
             "error"
         );
 
@@ -810,7 +843,7 @@ videoInput.addEventListener(
                 // STATUS
                 // ------------------------------------------------
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "processing"
                 );
 
@@ -851,6 +884,92 @@ videoInput.addEventListener(
     }
 );
 
+// ============================================================
+// DRAG AND DROP VIDEO UPLOAD
+// ============================================================
+
+if (uploadArea) {
+
+    uploadArea.addEventListener(
+        "dragover",
+        (event) => {
+
+            event.preventDefault();
+
+            uploadArea.classList.add(
+                "is-dragging"
+            );
+
+        }
+    );
+
+
+    uploadArea.addEventListener(
+        "dragleave",
+        () => {
+
+            uploadArea.classList.remove(
+                "is-dragging"
+            );
+
+        }
+    );
+
+
+    uploadArea.addEventListener(
+        "drop",
+        (event) => {
+
+            event.preventDefault();
+
+            uploadArea.classList.remove(
+                "is-dragging"
+            );
+
+
+            const file =
+                event.dataTransfer.files?.[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            if (!file.type.startsWith("video/")) {
+
+                console.warn(
+                    "Dropped file is not a video."
+                );
+
+                return;
+
+            }
+
+
+            const dataTransfer =
+                new DataTransfer();
+
+            dataTransfer.items.add(file);
+
+            videoInput.files =
+                dataTransfer.files;
+
+
+            videoInput.dispatchEvent(
+                new Event(
+                    "change",
+                    {
+                        bubbles: true
+                    }
+                )
+            );
+
+        }
+    );
+
+}
+
 
 // ============================================================
 // VIDEO PLAY
@@ -879,7 +998,7 @@ video.addEventListener(
         );
 
 
-        setAnalysisStatus(
+        updateAnalysisStatus(
             "processing"
         );
 
@@ -983,7 +1102,7 @@ video.addEventListener(
             );
 
 
-            setAnalysisStatus(
+            updateAnalysisStatus(
                 "error"
             );
 
@@ -1056,7 +1175,7 @@ video.addEventListener(
                 );
 
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "error"
                 );
 
@@ -1117,7 +1236,7 @@ video.addEventListener(
                 );
 
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "error"
                 );
 
@@ -1151,7 +1270,7 @@ video.addEventListener(
                 );
 
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "error"
                 );
 
@@ -1174,7 +1293,7 @@ video.addEventListener(
                 );
 
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "error"
                 );
 
@@ -1203,7 +1322,7 @@ video.addEventListener(
             // ANALYZE EVERY SQUAT REP
             // ==================================================
 
-            setAnalysisStatus(
+            updateAnalysisStatus(
                 "analyzing"
             );
 
@@ -1625,7 +1744,7 @@ video.addEventListener(
             );
 
 
-            setAnalysisStatus(
+            updateAnalysisStatus(
                 "complete"
             );
 
@@ -1719,7 +1838,7 @@ video.addEventListener(
                 );
 
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "error"
                 );
 
@@ -1742,7 +1861,7 @@ video.addEventListener(
                 );
 
 
-                setAnalysisStatus(
+                updateAnalysisStatus(
                     "error"
                 );
 
@@ -1765,7 +1884,7 @@ video.addEventListener(
             // ANALYZE EVERY BICEP CURL REP
             // ==================================================
 
-            setAnalysisStatus(
+            updateAnalysisStatus(
                 "analyzing"
             );
 
@@ -2186,7 +2305,7 @@ video.addEventListener(
             );
 
 
-            setAnalysisStatus(
+            updateAnalysisStatus(
                 "complete"
             );
 
@@ -2219,12 +2338,281 @@ video.addEventListener(
         );
 
 
-        setAnalysisStatus(
+        updateAnalysisStatus(
             "error"
         );
 
     }
 );
+
+// ============================================================
+// BICEP CURL PIPELINE
+// ============================================================
+
+// ... existing bicep curl code ...
+
+
+// ============================================================
+// NAVBAR / MOBILE NAVIGATION
+// ============================================================
+
+const navMenuToggle =
+    document.querySelector(".nav-menu-toggle");
+
+const mobileNav =
+    document.getElementById("mobileNav");
+
+const mobileNavLinks =
+    document.querySelectorAll(".mobile-nav-links a");
+
+const mobileNavCTA =
+    document.querySelector(".mobile-nav-cta");
+
+
+function setMobileNavState(isOpen) {
+
+    if (!navMenuToggle || !mobileNav) {
+        return;
+    }
+
+    navMenuToggle.classList.toggle(
+        "is-open",
+        isOpen
+    );
+
+    mobileNav.classList.toggle(
+        "is-open",
+        isOpen
+    );
+
+    navMenuToggle.setAttribute(
+        "aria-expanded",
+        String(isOpen)
+    );
+
+    navMenuToggle.setAttribute(
+        "aria-label",
+        isOpen
+            ? "Close navigation menu"
+            : "Open navigation menu"
+    );
+
+    mobileNav.setAttribute(
+        "aria-hidden",
+        String(!isOpen)
+    );
+
+    document.body.classList.toggle(
+        "mobile-nav-open",
+        isOpen
+    );
+}
+
+
+function closeMobileNav() {
+    setMobileNavState(false);
+}
+
+
+if (navMenuToggle && mobileNav) {
+
+    navMenuToggle.addEventListener(
+        "click",
+        () => {
+
+            const isOpen =
+                navMenuToggle.getAttribute(
+                    "aria-expanded"
+                ) === "true";
+
+            setMobileNavState(!isOpen);
+        }
+    );
+
+
+    mobileNavLinks.forEach((link) => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                const href = link.getAttribute("href");
+
+                // Close menu for same-page navigation.
+                if (href && href.startsWith("#")) {
+                    closeMobileNav();
+                }
+
+                // For page navigation such as history.html,
+                // let the browser navigate naturally.
+            }
+        );
+
+    });
+
+
+    if (mobileNavCTA) {
+
+        mobileNavCTA.addEventListener(
+            "click",
+            () => {
+                closeMobileNav();
+            }
+        );
+
+    }
+
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (event.key === "Escape") {
+                closeMobileNav();
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        (event) => {
+
+            if (!mobileNav.classList.contains("is-open")) {
+                return;
+            }
+
+            const clickedInsideHeader =
+                event.target.closest(".site-header");
+
+            if (!clickedInsideHeader) {
+                closeMobileNav();
+            }
+
+        }
+    );
+
+
+    window.addEventListener(
+        "resize",
+        () => {
+
+            if (window.innerWidth > 950) {
+                closeMobileNav();
+            }
+
+        }
+    );
+
+}
+// ============================================================
+// HERO METRIC ANIMATION
+// ============================================================
+
+function animateHeroMetrics() {
+
+    const formScore = document.getElementById("heroFormScore");
+    const kneeAngle = document.getElementById("heroKneeAngle");
+
+    if (!formScore || !kneeAngle) {
+        return;
+    }
+
+    const formScoreTarget = 96;
+    const kneeAngleTarget = 82;
+
+    const animationDuration = 1600;
+    const startTime = performance.now();
+
+    // Start both values from zero.
+    formScore.textContent = "0";
+    kneeAngle.textContent = "0°";
+
+    function easeOutCubic(progress) {
+        return 1 - Math.pow(1 - progress, 3);
+    }
+
+    function updateRing(score) {
+
+        formScore.style.background = `
+            radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.98) 0 62%,
+                transparent 63%
+            ),
+            conic-gradient(
+                #B3E0DA 0 ${score}%,
+                rgba(151, 211, 205, 0.24) ${score}% 100%
+            )
+        `;
+    }
+
+    function animate(currentTime) {
+
+        const elapsed = currentTime - startTime;
+
+        const rawProgress = Math.min(
+            elapsed / animationDuration,
+            1
+        );
+
+        const progress = easeOutCubic(rawProgress);
+
+        const currentScore = Math.round(
+            formScoreTarget * progress
+        );
+
+        const currentAngle = Math.round(
+            kneeAngleTarget * progress
+        );
+
+        // Form score number
+        formScore.textContent = currentScore;
+
+        // Form score ring
+        updateRing(currentScore);
+
+        // Knee angle
+        kneeAngle.textContent = `${currentAngle}°`;
+
+        if (rawProgress < 1) {
+
+            requestAnimationFrame(animate);
+
+        } else {
+
+            // Guarantee exact final values.
+            formScore.textContent = "96";
+            kneeAngle.textContent = "82°";
+
+            updateRing(96);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+
+// Start hero metric animation.
+animateHeroMetrics();
+
+
+// ============================================================
+// FINAL INITIALIZATION
+// ============================================================
+
+// YOUR EXISTING INITIALIZATION CODE
+// DO NOT MOVE OR CHANGE IT
+
+
+
+// ============================================================
+// FINAL INITIALIZATION
+// ============================================================
+
+// YOUR EXISTING INITIALIZATION CODE
+// DO NOT MOVE OR CHANGE IT
 
 
 // ============================================================

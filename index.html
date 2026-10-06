@@ -7,6 +7,10 @@
 
     <title>FormFit AI | AI Fitness Intelligence</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -18,87 +22,64 @@
 
     <header class="site-header">
 
-        <nav class="navbar">
+        <nav class="navbar" aria-label="Main navigation">
 
-            <a href="index.html" class="brand" aria-label="FormFit AI home">
-                <span class="brand-mark">F</span>
+            <div class="barbell">
 
-                <span class="brand-text">
-                    <strong>FormFit</strong>
-                    <span>AI</span>
-                </span>
-            </a>
+                <!-- LEFT END: tip + plates -->
+                <div class="bb-end bb-end-left" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
 
+                <!-- THE BAR -->
+                <div class="bb-bar">
 
-            <!-- Desktop navigation -->
-            <div class="nav-links">
-                <a href="#analyzer">Analyzer</a>
-                <a href="#how-it-works">How It Works</a>
-                <a href="#exercises">Exercises</a>
-                <a href="history.html">History</a>
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html" class="brand" aria-label="FormFit AI home">
+                        <strong>FormFit</strong><span>AI</span>
+                    </a>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <div class="nav-links">
+                        <a href="#analyzer">Analyzer</a>
+                        <a href="#how-it-works">How It Works</a>
+                        <a href="#exercises">Exercises</a>
+                        <a href="history.html">History</a>
+                    </div>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="#analyzer" class="nav-cta">
+                        <span class="nav-cta-text">Analyze Form</span>
+                        <span class="nav-cta-arrow">→</span>
+                    </a>
+
+                    <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu"
+                        aria-expanded="false" aria-controls="mobileNav">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                </div>
+
+                <!-- RIGHT END: bar → plates → tip (row-reverse in CSS) -->
+                <div class="bb-end bb-end-right" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
             </div>
-
-
-            <!-- Desktop CTA -->
-            <a href="#analyzer" class="nav-cta">
-                Analyze Form
-                <span>→</span>
-            </a>
-
-
-            <!-- Mobile menu button -->
-            <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false"
-                aria-controls="mobileNav">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
         </nav>
 
-
-        <!-- Mobile navigation -->
+        <!-- keep your existing mobile nav exactly as it is -->
         <div class="mobile-nav" id="mobileNav" aria-hidden="true">
-
-            <div class="mobile-nav-inner">
-
-                <div class="mobile-nav-label">
-                    <span>FORMFIT AI</span>
-                    <small>Movement intelligence</small>
-                </div>
-
-                <div class="mobile-nav-links">
-
-                    <a href="#analyzer">
-                        <span>Analyzer</span>
-                        <span>→</span>
-                    </a>
-
-                    <a href="#how-it-works">
-                        <span>How It Works</span>
-                        <span>→</span>
-                    </a>
-
-                    <a href="#exercises">
-                        <span>Exercises</span>
-                        <span>→</span>
-                    </a>
-
-                    <a href="history.html">
-                        <span>History</span>
-                        <span>→</span>
-                    </a>
-
-                </div>
-
-
-                <a href="#analyzer" class="mobile-nav-cta">
-                    Analyze Your Form
-                    <span>→</span>
-                </a>
-
-            </div>
-
+            ... (unchanged) ...
         </div>
 
     </header>
@@ -157,19 +138,41 @@
                 <div class="hero-athlete">
 
                     <div class="athlete-placeholder">
-                        <span>AI</span>
+                        <img src="assets/hero-athlete.png" alt="Athlete performing a squat" class="hero-athlete-image">
                     </div>
 
                     <!-- Pose-analysis overlay -->
+                    <svg class="pose-skeleton" aria-hidden="true">
 
-                    <div class="pose-line pose-line-shoulder"></div>
-                    <div class="pose-line pose-line-torso"></div>
-                    <div class="pose-line pose-line-leg"></div>
+                        <!-- bones -->
+                        <line pathLength="1" x1="52.9%" y1="42.4%" x2="78.4%" y2="56.3%" /> <!-- shoulder → elbow -->
+                        <line pathLength="1" x1="52.9%" y1="42.4%" x2="39.5%" y2="68.1%" /> <!-- shoulder → hip -->
+                        <line pathLength="1" x1="39.5%" y1="68.1%" x2="69.5%" y2="70.3%" /> <!-- hip → knee -->
+                        <line pathLength="1" x1="69.5%" y1="70.3%" x2="52.9%" y2="88.3%" /> <!-- knee → ankle -->
 
-                    <div class="pose-point point-shoulder"></div>
-                    <div class="pose-point point-elbow"></div>
-                    <div class="pose-point point-hip"></div>
-                    <div class="pose-point point-knee"></div>
+                        <!-- landmarks -->
+                        <g class="lm">
+                            <circle class="halo" cx="52.9%" cy="42.4%" r="15" />
+                            <circle class="dot" cx="52.9%" cy="42.4%" r="6.5" />
+                        </g>
+                        <g class="lm">
+                            <circle class="halo" cx="78.4%" cy="56.3%" r="15" />
+                            <circle class="dot" cx="78.4%" cy="56.3%" r="6.5" />
+                        </g>
+                        <g class="lm">
+                            <circle class="halo" cx="39.5%" cy="68.1%" r="15" />
+                            <circle class="dot" cx="39.5%" cy="68.1%" r="6.5" />
+                        </g>
+                        <g class="lm lm-key">
+                            <circle class="halo" cx="69.5%" cy="70.3%" r="15" />
+                            <circle class="dot" cx="69.5%" cy="70.3%" r="6.5" />
+                        </g>
+                        <g class="lm">
+                            <circle class="halo" cx="52.9%" cy="88.3%" r="15" />
+                            <circle class="dot" cx="52.9%" cy="88.3%" r="6.5" />
+                        </g>
+
+                    </svg>
 
                 </div>
 
@@ -182,7 +185,7 @@
                         FORM SCORE
                     </span>
 
-                    <strong>96</strong>
+                    <strong id="heroFormScore">96</strong>
 
                     <span class="score-good">
                         Excellent
@@ -194,7 +197,7 @@
                 <div class="floating-card hero-angle-card">
 
                     <span>Knee Angle</span>
-                    <strong>82°</strong>
+                    <strong id="heroKneeAngle">82°</strong>
 
                 </div>
 
