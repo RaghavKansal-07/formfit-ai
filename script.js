@@ -155,11 +155,70 @@ function updateAnalysisStatusUI(status) {
         "Ready for analysis";
 }
 
+const analyzerWorkspace =
+    document.getElementById("analyzerWorkspace");
+
+const scoreRingElement =
+    document.getElementById("scoreRing");
+
+const scoreVerdictElement =
+    document.getElementById("scoreVerdict");
+
+const workspaceStateByStatus = {
+    loading: "idle",
+    idle: "idle",
+    processing: "analyzing",
+    analyzing: "analyzing",
+    complete: "results",
+    error: "error"
+};
+
+function syncWorkspaceState(status) {
+
+    if (!analyzerWorkspace) {
+        return;
+    }
+
+    const current = analyzerWorkspace.dataset.state;
+    const next = workspaceStateByStatus[status] ?? "idle";
+
+    // Late AI initialization must not pull the user back to the upload view.
+    if (next === "idle" && current !== "idle") {
+        return;
+    }
+
+    // An error before any video exists (e.g. AI failed to load)
+    // should not hide the upload view.
+    if (next === "error" && !video.getAttribute("src")) {
+        return;
+    }
+
+    // Replaying a finished video fires "processing" again.
+    // Keep showing the results. A new upload resets the state itself.
+    if (
+        next === "analyzing" &&
+        (current === "results" || current === "error")
+    ) {
+        return;
+    }
+
+    analyzerWorkspace.dataset.state = next;
+
+    if (
+        next === "results" &&
+        scoreVerdictElement?.textContent === "Measuring…"
+    ) {
+        scoreVerdictElement.textContent = "No reps detected";
+    }
+}
+
 function updateAnalysisStatus(status) {
 
     setAnalysisStatus(status);
 
     updateAnalysisStatusUI(status);
+
+    syncWorkspaceState(status);
 }
 
 // ============================================================
@@ -260,12 +319,14 @@ function updateAnalyzerMetrics(analyzedReps) {
                 "analysis-feedback-item";
 
             feedbackItem.textContent =
-                "Upload a workout video to receive form feedback.";
+                "No complete reps were detected. Try a side view with your full body in frame.";
 
             analysisFeedbackText.appendChild(
                 feedbackItem
             );
         }
+
+        animateMetricValues();
 
         return;
     }
@@ -508,6 +569,23 @@ exerciseCards.forEach((card) => {
             getSelectedExercise()
         );
     });
+});
+
+const revealItems = document.querySelectorAll(".exercise-card, .coming-soon-card");
+
+const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            revealObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.15 });
+
+revealItems.forEach((el, i) => {
+    el.style.setProperty("--delay", `${i * 80}ms`);
+    el.classList.add("reveal");
+    revealObserver.observe(el);
 });
 
 // ============================================================
@@ -1945,6 +2023,8 @@ video.addEventListener(
                 analyzedReps
             );
 
+            updateAnalyzerMetrics(analyzedReps);
+
             console.log(
                 "================================"
             );
@@ -2525,7 +2605,6 @@ function animateHeroMetrics() {
     const animationDuration = 1600;
     const startTime = performance.now();
 
-    // Start both values from zero.
     formScore.textContent = "0";
     kneeAngle.textContent = "0°";
 
@@ -2567,13 +2646,9 @@ function animateHeroMetrics() {
             kneeAngleTarget * progress
         );
 
-        // Form score number
         formScore.textContent = currentScore;
-
-        // Form score ring
         updateRing(currentScore);
 
-        // Knee angle
         kneeAngle.textContent = `${currentAngle}°`;
 
         if (rawProgress < 1) {
@@ -2582,7 +2657,6 @@ function animateHeroMetrics() {
 
         } else {
 
-            // Guarantee exact final values.
             formScore.textContent = "96";
             kneeAngle.textContent = "82°";
 
@@ -2599,21 +2673,308 @@ animateHeroMetrics();
 
 
 // ============================================================
-// FINAL INITIALIZATION
+// ANALYZER WORKSPACE — TWO-STATE UI
 // ============================================================
 
-// YOUR EXISTING INITIALIZATION CODE
-// DO NOT MOVE OR CHANGE IT
+const fileNameElement = document.getElementById("fileName");
+const fileMetaElement = document.getElementById("fileMeta");
+const dropErrorElement = document.getElementById("dropError");
+const replaceVideoButton = document.getElementById("replaceVideoBtn");
+const removeVideoButton = document.getElementById("removeVideoBtn");
+const analyzeAnotherButton = document.getElementById("analyzeAnotherBtn");
+const processingStageElement = document.getElementById("processingStage");
+const progressElement = document.querySelector(".ws-progress");
+const videoStageElement = video.closest(".video-stage");
+
+const TRACKING_TEXT =
+    "Tracking your movement… insights appear when the video finishes.";
 
 
+// ---------- helpers ----------
 
-// ============================================================
-// FINAL INITIALIZATION
-// ============================================================
+function formatDuration(seconds) {
+    const total = Math.round(seconds);
+    const m = Math.floor(total / 60);
+    const s = String(total % 60).padStart(2, "0");
+    return `${m}:${s}`;
+}
 
-// YOUR EXISTING INITIALIZATION CODE
-// DO NOT MOVE OR CHANGE IT
+function formatSize(bytes) {
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+}
 
+function scrollWorkspaceIntoView() {
+    analyzerWorkspace?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+function showDropError(message) {
+    if (!dropErrorElement) return;
+    dropErrorElement.textContent = message;
+    dropErrorElement.hidden = false;
+}
+
+function hideDropError() {
+    if (!dropErrorElement) return;
+    dropErrorElement.hidden = true;
+}
+
+function resetResultsUI() {
+
+    if (repCountElement) repCountElement.textContent = "0";
+
+    [formScoreElement, rangeOfMotionElement, tempoElement].forEach((el) => {
+        if (el) el.textContent = "—";
+    });
+
+    if (scoreRingElement) {
+        scoreRingElement.style.setProperty("--score", "0");
+        delete scoreRingElement.dataset.tier;
+    }
+
+    if (scoreVerdictElement) scoreVerdictElement.textContent = "Measuring…";
+
+    if (progressElement) progressElement.style.setProperty("--progress", "0");
+
+    if (processingStageElement) {
+        processingStageElement.textContent = "Tracking movement";
+    }
+
+    if (analysisFeedbackText) {
+        analysisFeedbackText.innerHTML = "";
+
+        const item = document.createElement("div");
+        item.className = "analysis-feedback-item";
+        item.textContent = TRACKING_TEXT;
+
+        analysisFeedbackText.appendChild(item);
+    }
+}
+
+
+// ---------- count-up animation for the results ----------
+
+function animateMetricValue(element, onFrame) {
+
+    if (!element) return;
+
+    const finalText = element.textContent.trim();
+    const match = finalText.match(/^(-?\d+(?:\.\d+)?)(.*)$/);
+
+    if (!match) return;                      // "—" etc.
+
+    const target = parseFloat(match[1]);
+    const suffix = match[2];
+    const decimals = (match[1].split(".")[1] || "").length;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        if (onFrame) onFrame(target);
+        return;
+    }
+
+    const duration = 900;
+    const start = performance.now();
+
+    function frame(now) {
+
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const value = target * eased;
+
+        element.textContent = value.toFixed(decimals) + suffix;
+        if (onFrame) onFrame(value);
+
+        if (t < 1) {
+            requestAnimationFrame(frame);
+        } else {
+            element.textContent = finalText;
+            if (onFrame) onFrame(target);
+        }
+    }
+
+    requestAnimationFrame(frame);
+}
+
+function animateMetricValues() {
+
+    const score = parseFloat(formScoreElement?.textContent);
+
+    if (Number.isFinite(score)) {
+
+        const tier = score >= 75 ? "high" : score >= 60 ? "mid" : "low";
+
+        const verdict =
+            score >= 90 ? "Excellent"
+                : score >= 75 ? "Good"
+                    : score >= 60 ? "Fair"
+                        : "Needs work";
+
+        if (scoreRingElement) scoreRingElement.dataset.tier = tier;
+        if (scoreVerdictElement) scoreVerdictElement.textContent = verdict;
+    }
+
+    animateMetricValue(repCountElement);
+    animateMetricValue(rangeOfMotionElement);
+    animateMetricValue(tempoElement);
+
+    animateMetricValue(formScoreElement, (value) => {
+        scoreRingElement?.style.setProperty(
+            "--score",
+            Math.min(100, value).toFixed(1)
+        );
+    });
+}
+
+
+// ---------- upload interactions ----------
+
+// Lets the same file be chosen twice in a row (Replace).
+videoInput.addEventListener("click", () => {
+    videoInput.value = "";
+});
+
+// Runs right after the original change handler above.
+videoInput.addEventListener("change", (event) => {
+
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    hideDropError();
+    resetResultsUI();
+
+    if (fileNameElement) fileNameElement.textContent = file.name;
+    if (fileMetaElement) fileMetaElement.textContent = formatSize(file.size);
+
+    analyzerWorkspace.dataset.state = "analyzing";
+
+    scrollWorkspaceIntoView();
+});
+
+video.addEventListener("loadedmetadata", () => {
+
+    if (!fileMetaElement || !Number.isFinite(video.duration)) return;
+
+    const file = videoInput.files?.[0];
+
+    fileMetaElement.textContent = [
+        formatDuration(video.duration),
+        `${video.videoWidth}×${video.videoHeight}`,
+        file ? formatSize(file.size) : ""
+    ].filter(Boolean).join(" · ");
+});
+
+// Unreadable / unsupported file chosen from the picker.
+video.addEventListener("error", () => {
+    if (video.getAttribute("src")) {
+        updateAnalysisStatus("error");
+    }
+});
+
+// Progress bar follows playback, because analysis runs live while the video plays.
+video.addEventListener("timeupdate", () => {
+
+    if (
+        analyzerWorkspace?.dataset.state !== "analyzing" ||
+        !video.duration
+    ) {
+        return;
+    }
+
+    const percent = Math.min(
+        100,
+        Math.round((video.currentTime / video.duration) * 100)
+    );
+
+    progressElement?.style.setProperty("--progress", String(percent));
+
+    if (processingStageElement) {
+        processingStageElement.textContent =
+            `Tracking movement · ${percent}%`;
+    }
+});
+
+// Keep the skeleton canvas aligned whenever the stage changes size.
+if (videoStageElement && "ResizeObserver" in window) {
+    new ResizeObserver(() => syncCanvasToVideo())
+        .observe(videoStageElement);
+}
+
+
+// ---------- dropzone: click, keyboard, wrong file type ----------
+
+if (uploadArea) {
+
+    uploadArea.addEventListener("click", () => videoInput.click());
+
+    uploadArea.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            videoInput.click();
+        }
+    });
+
+    uploadArea.addEventListener("drop", (event) => {
+
+        const file = event.dataTransfer?.files?.[0];
+
+        if (file && !file.type.startsWith("video/")) {
+            showDropError(
+                "That file isn't a video. Please choose an MP4 or WebM file."
+            );
+        } else {
+            hideDropError();
+        }
+    });
+}
+
+
+// ---------- file bar + results actions ----------
+
+function clearVideo() {
+
+    setIsProcessingVideo(false);
+
+    video.pause();
+
+    resetAnalysisState();
+
+    if (currentVideoURL) {
+        URL.revokeObjectURL(currentVideoURL);
+        currentVideoURL = null;
+    }
+
+    video.removeAttribute("src");
+    video.load();
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    videoInput.value = "";
+
+    resetResultsUI();
+    hideDropError();
+
+    analyzerWorkspace.dataset.state = "idle";
+
+    updateAnalysisStatus("idle");
+}
+
+replaceVideoButton?.addEventListener("click", () => videoInput.click());
+analyzeAnotherButton?.addEventListener("click", () => videoInput.click());
+removeVideoButton?.addEventListener("click", clearVideo);
+
+
+// ---------- auto-scroll when an exercise is chosen ----------
+
+exerciseCards.forEach((card) => {
+    card.addEventListener("click", () => {
+        if (card.dataset.exercise) {
+            scrollWorkspaceIntoView();
+        }
+    });
+});
 
 // ============================================================
 // START APPLICATION

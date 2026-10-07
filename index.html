@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -247,304 +250,447 @@
             </div>
 
 
-            <!-- EXERCISE SELECTOR -->
-
-            <div class="exercise-selector">
+            <section class="exercise-selector">
 
                 <div class="selector-heading">
-
-                    <span>
-                        01
-                    </span>
-
-                    <div>
-                        <h3>Select Exercise</h3>
-                        <p>
-                            Choose what you want FormFit AI
-                            to analyze.
-                        </p>
+                    <div class="selector-eyebrow">
+                        <span>01</span><span>/</span><strong>EXERCISE SELECTION</strong>
                     </div>
 
+                    <div class="selector-title-row">
+                        <h2>
+                            Choose Your Movement
+                            <br>
+                            <em>Let FormFit AI Analyze It.</em>
+                        </h2>
+
+                        <div class="selector-intro">
+                            <p>
+                                Select an exercise, upload your video, and get detailed AI
+                                analysis of your form, angles and movement patterns.
+                            </p>
+
+                            <div class="selector-features">
+                                <span>
+                                    <i class="feature-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <rect x="2" y="6" width="14" height="12" rx="2" />
+                                            <path d="m16 10.5 5-3v9l-5-3" />
+                                        </svg>
+                                    </i>
+                                    <em>Upload<br>Your Video</em>
+                                </span>
+                                <span>
+                                    <i class="feature-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M12 3a4 4 0 0 0-4 4 4 4 0 0 0-3 6 4 4 0 0 0 3 6 4 4 0 0 0 8 0 4 4 0 0 0 3-6 4 4 0 0 0-3-6 4 4 0 0 0-4-4z" />
+                                            <path d="M12 3v18" />
+                                        </svg>
+                                    </i>
+                                    <em>AI Form<br>Analysis</em>
+                                </span>
+                                <span>
+                                    <i class="feature-icon">
+                                        <svg viewBox="0 0 24 24">
+                                            <path d="M5 20V12M12 20V4M19 20v-9" />
+                                        </svg>
+                                    </i>
+                                    <em>Detailed<br>Feedback</em>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 
                 <div class="exercise-grid">
 
-                    <button type="button" class="exercise-card is-selected" data-exercise="squat">
+                    <!-- SQUAT -->
+                    <button type="button" class="exercise-card squat-card is-selected" data-exercise="squat">
 
-                        <div class="exercise-image squat-image">
-                            <span>AI POSE</span>
+                        <div class="exercise-bg"></div>
+
+                        <img class="exercise-athlete" src="assets/squat-athlete.png" alt="Squat exercise">
+
+                        <div class="exercise-card-top">
+                            <span class="exercise-status"><span></span>ACTIVE</span>
+                            <span class="exercise-number">01</span>
                         </div>
 
-                        <div class="exercise-info">
+                        <div class="exercise-content">
+                            <h3>Squat</h3>
+                            <span class="exercise-category">Lower Body</span>
 
-                            <div>
-                                <h4>Squat</h4>
+                            <p class="exercise-description">
+                                Analyze your squat depth, knee alignment,
+                                hip movement and overall form.
+                            </p>
 
-                                <p>
-                                    Lower Body · AI Analysis
-                                </p>
+                            <div class="analysis-features">
+                                <span>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 4v12m0 0-4-4m4 4 4-4M5 20h14" />
+                                    </svg>
+                                    Depth<br>Analysis
+                                </span>
+                                <span>
+                                    <svg viewBox="0 0 24 24">
+                                        <circle cx="12" cy="5" r="2" />
+                                        <path d="m9 21 2-7-3-3 3-3 3 2 3 1M11 14l4 2 1 5" />
+                                    </svg>
+                                    Knee<br>Alignment
+                                </span>
+                                <span>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M8 3c-2 4-2 8 0 12M16 3c2 4 2 8 0 12M8 15l-2 6M16 15l2 6M9 11h6" />
+                                    </svg>
+                                    Hip &amp; Torso<br>Movement
+                                </span>
                             </div>
 
-                            <span class="exercise-arrow">
-                                →
-                            </span>
-
+                            <div class="exercise-action">
+                                <span>Analyze Squat</span>
+                                <span class="exercise-arrow">→</span>
+                            </div>
                         </div>
-
                     </button>
 
 
-                    <button type="button" class="exercise-card" data-exercise="bicep-curl">
+                    <!-- BICEP CURL -->
+                    <button type="button" class="exercise-card curl-card" data-exercise="bicep-curl">
 
-                        <div class="exercise-image curl-image">
-                            <span>AI POSE</span>
+                        <div class="exercise-bg"></div>
+
+                        <img class="exercise-athlete" src="assets/bicep-curl-athlete.png" alt="Bicep curl exercise">
+
+                        <div class="exercise-card-top">
+                            <span class="exercise-status"><span></span>ACTIVE</span>
+                            <span class="exercise-number">02</span>
                         </div>
 
-                        <div class="exercise-info">
+                        <div class="exercise-content">
+                            <h3>Bicep Curl</h3>
+                            <span class="exercise-category">Upper Body</span>
 
-                            <div>
-                                <h4>Bicep Curl</h4>
+                            <p class="exercise-description">
+                                Analyze your elbow position, range of motion,
+                                curl depth and rep consistency.
+                            </p>
 
-                                <p>
-                                    Upper Body · AI Analysis
-                                </p>
+                            <div class="analysis-features">
+                                <span>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M6 20c0-6 2-9 6-10l2-6M12 10l6 2" />
+                                    </svg>
+                                    Elbow<br>Position
+                                </span>
+                                <span>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M20 12a8 8 0 1 1-3-6.2M20 4v4h-4" />
+                                    </svg>
+                                    Range of<br>Motion
+                                </span>
+                                <span>
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12" />
+                                    </svg>
+                                    Rep<br>Consistency
+                                </span>
                             </div>
 
-                            <span class="exercise-arrow">
-                                →
-                            </span>
-
+                            <div class="exercise-action">
+                                <span>Analyze Bicep Curl</span>
+                                <span class="exercise-arrow">→</span>
+                            </div>
                         </div>
-
                     </button>
 
                 </div>
 
-            </div>
+
+                <!-- MORE EXERCISES -->
+                <div class="more-exercises">
+
+                    <div class="more-exercises-heading">
+                        <h3>More Exercises</h3>
+                        <p>We are constantly adding new exercises. Stay tuned!</p>
+                    </div>
+
+                    <div class="coming-soon-grid">
+
+                        <div class="coming-soon-card">
+                            <span class="coming-soon-badge">Coming Soon</span>
+                            <div class="coming-soon-text">
+                                <h4>Push-Up</h4>
+                                <span class="coming-soon-category">Upper Body</span>
+                            </div>
+                            <img src="assets/pushup-athlete.png" alt="">
+                            <b class="coming-soon-arrow">→</b>
+                        </div>
+
+                        <div class="coming-soon-card">
+                            <span class="coming-soon-badge">Coming Soon</span>
+                            <div class="coming-soon-text">
+                                <h4>Lunge</h4>
+                                <span class="coming-soon-category">Lower Body</span>
+                            </div>
+                            <img src="assets/lunge-athlete.png" alt="">
+                            <b class="coming-soon-arrow">→</b>
+                        </div>
+
+                        <div class="coming-soon-card">
+                            <span class="coming-soon-badge">Coming Soon</span>
+                            <div class="coming-soon-text">
+                                <h4>Deadlift</h4>
+                                <span class="coming-soon-category">Lower Body</span>
+                            </div>
+                            <img src="assets/deadlift-athlete.png" alt="">
+                            <b class="coming-soon-arrow">→</b>
+                        </div>
+
+                        <div class="coming-soon-card">
+                            <span class="coming-soon-badge">Coming Soon</span>
+                            <div class="coming-soon-text">
+                                <h4>Shoulder Press</h4>
+                                <span class="coming-soon-category">Upper Body</span>
+                            </div>
+                            <img src="assets/shoulder-press-athlete.png" alt="">
+                            <b class="coming-soon-arrow">→</b>
+                        </div>
+
+                        <div class="coming-soon-card">
+                            <span class="coming-soon-badge">Coming Soon</span>
+                            <div class="coming-soon-text">
+                                <h4>Plank</h4>
+                                <span class="coming-soon-category">Core</span>
+                            </div>
+                            <img src="assets/plank-athlete.png" alt="">
+                            <b class="coming-soon-arrow">→</b>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
 
 
             <!-- UPLOAD WORKSPACE -->
 
-            <div class="analyzer-workspace">
+            <div class="analyzer-workspace" id="analyzerWorkspace" data-state="idle">
 
-                <div class="workspace-heading">
+                <!-- REQUIRED BY EXISTING SCRIPT (kept outside the dropzone on purpose) -->
+                <input type="file" id="videoInput" accept="video/*" hidden>
 
-                    <div class="workspace-step">
-                        <span>02</span>
+                <!-- ================= HEADER ================= -->
 
-                        <div>
-                            <h3>Upload Your Video</h3>
+                <div class="ws-head">
 
-                            <p>
-                                Record from a clear side view
-                                for the most reliable analysis.
-                            </p>
-                        </div>
+                    <div>
+                        <p class="ws-eyebrow"><span>02</span> / Video upload</p>
+
+                        <h3 class="ws-title">Show us your <em>movement.</em></h3>
+
+                        <p class="ws-sub">
+                            Record from a clear side view for the most reliable analysis.
+                        </p>
                     </div>
 
-                    <span id="selectedExerciseLabel" class="selected-exercise-label">
-                        Squat selected
-                    </span>
-
-                </div>
-
-
-                <!-- Upload area -->
-
-                <div class="upload-area" id="uploadArea">
-
-                    <div class="upload-icon">
-                        ↑
-                    </div>
-
-                    <h3>
-                        Drop your workout video here
-                    </h3>
-
-                    <p>
-                        or choose a video from your device
-                    </p>
-
-                    <label for="videoInput" class="button button-primary upload-button">
-                        Choose Video
-                    </label>
-
-                    <!-- REQUIRED BY EXISTING SCRIPT -->
-
-                    <input type="file" id="videoInput" accept="video/*" hidden>
-
-                    <div class="upload-guidance">
-
-                        <span>MP4 / WebM</span>
-                        <span>·</span>
-                        <span>Side view recommended</span>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Video analysis area -->
-
-                <div class="video-analysis-container">
-
-                    <div class="video-header">
-
-                        <div>
-                            <span class="status-dot"></span>
-
-                            <span id="analysisStatus">
-                                Ready for analysis
-                            </span>
-                        </div>
-
-                        <span id="currentExerciseLabel" class="current-exercise">
-                            Squat
+                    <div class="ws-chip-row">
+                        <span id="selectedExerciseLabel" class="selected-exercise-label">
+                            Squat selected
                         </span>
+                        <a href="#analyzer" class="ws-change">Change</a>
+                    </div>
+
+                </div>
+
+
+                <!-- ================= STATE 1: BEFORE UPLOAD ================= -->
+
+                <div class="ws-upload">
+
+                    <div class="ws-drop" id="uploadArea" role="button" tabindex="0"
+                        aria-label="Choose a workout video to upload">
+
+                        <div class="ws-drop-icon" aria-hidden="true">↑</div>
+
+                        <h4>Drop your workout video here</h4>
+
+                        <p>or click to choose a video from your device</p>
+
+                        <span class="button button-primary ws-drop-btn">Choose video</span>
+
+                        <div class="ws-formats">
+                            <span>MP4 / WebM</span>
+                            <span>·</span>
+                            <span>Side view recommended</span>
+                        </div>
+
+                        <p class="ws-drop-error" id="dropError" role="alert" hidden></p>
+
+                    </div>
+
+                    <aside class="ws-guide">
+
+                        <span class="ws-label">How to film</span>
+
+                        <ol class="ws-guide-list">
+                            <li>
+                                Film from the side
+                                <span>Camera at 90° to your movement, not front or back.</span>
+                            </li>
+                            <li>
+                                Keep your whole body in frame
+                                <span>Head to feet visible for the entire set.</span>
+                            </li>
+                            <li>
+                                Camera at hip height
+                                <span>About 2–3 m away, phone held still.</span>
+                            </li>
+                            <li>
+                                Good lighting
+                                <span>Plain background, no strong backlight.</span>
+                            </li>
+                        </ol>
+
+                        <p class="ws-privacy">
+                            Your video is analyzed in your browser and isn't uploaded.
+                        </p>
+
+                    </aside>
+
+                </div>
+
+
+                <!-- ================= STATE 2: AFTER UPLOAD ================= -->
+
+                <div class="ws-filebar">
+
+                    <div class="ws-file">
+                        <span class="ws-file-icon" aria-hidden="true">▶</span>
+
+                        <div class="ws-file-text">
+                            <strong id="fileName">video.mp4</strong>
+                            <span id="fileMeta">—</span>
+                        </div>
+                    </div>
+
+                    <div class="ws-file-actions">
+                        <button type="button" class="ws-link-btn" id="replaceVideoBtn">Replace</button>
+                        <button type="button" class="ws-link-btn" id="removeVideoBtn">Remove</button>
+                    </div>
+
+                </div>
+
+
+                <div class="ws-analysis">
+
+                    <!-- ---------- LEFT: VIDEO ---------- -->
+
+                    <div class="ws-video-card">
+
+                        <div class="ws-video-head">
+
+                            <div aria-live="polite">
+                                <span class="status-dot"></span>
+                                <span id="analysisStatus">Ready for analysis</span>
+                            </div>
+
+                            <span id="currentExerciseLabel" class="current-exercise">Squat</span>
+
+                        </div>
+
+                        <!-- .video-stage is required by the script (canvas alignment) -->
+                        <div class="video-stage">
+
+                            <!-- REQUIRED BY EXISTING SCRIPT -->
+                            <video id="video" controls playsinline></video>
+
+                            <!-- REQUIRED BY EXISTING SCRIPT -->
+                            <canvas id="canvas"></canvas>
+
+                            <div id="processingOverlay" class="processing-overlay" aria-hidden="true">
+                                <span class="ws-scan-dot"></span>
+                                <span id="processingStage">Tracking movement</span>
+                            </div>
+
+                        </div>
+
+                        <div class="ws-progress" aria-hidden="true"><span></span></div>
 
                     </div>
 
 
-                    <div class="video-stage">
+                    <!-- ---------- RIGHT: RESULTS ---------- -->
 
-                        <!-- REQUIRED BY EXISTING SCRIPT -->
+                    <div class="ws-results">
 
-                        <video id="video" controls playsinline></video>
+                        <div class="ws-score">
 
-                        <!-- REQUIRED BY EXISTING SCRIPT -->
-
-                        <canvas id="canvas"></canvas>
-
-
-                        <!-- Empty state -->
-
-                        <div id="videoEmptyState" class="video-empty-state">
-
-                            <div class="empty-ai-icon">
-                                ✦
+                            <div class="ws-score-ring" id="scoreRing">
+                                <strong id="formScore">—</strong>
                             </div>
 
-                            <h3>
-                                Your AI analysis starts here
-                            </h3>
-
-                            <p>
-                                Upload an exercise video to
-                                visualize your movement and
-                                receive form feedback.
-                            </p>
-
-                        </div>
-
-
-                        <!-- Processing overlay -->
-
-                        <div id="processingOverlay" class="processing-overlay">
-
-                            <div class="processing-content">
-
-                                <div class="processing-ring"></div>
-
-                                <p class="processing-title">
-                                    Analyzing Movement
-                                </p>
-
-                                <p id="processingStage" class="processing-stage">
-                                    Detecting pose
-                                </p>
-
+                            <div class="ws-score-text">
+                                <span class="ws-label">Form score</span>
+                                <p class="ws-verdict" id="scoreVerdict">Measuring…</p>
+                                <small>Average across all reps</small>
                             </div>
 
                         </div>
 
-                    </div>
+                        <div class="ws-metrics">
 
+                            <div class="ws-metric">
+                                <span class="ws-label">Reps</span>
+                                <strong id="repCount">0</strong>
+                                <small>detected</small>
+                            </div>
 
-                    <!-- =================================================
-                         ANALYSIS METRICS
-                    ================================================== -->
+                            <div class="ws-metric">
+                                <span class="ws-label">Range of motion</span>
+                                <strong id="rangeOfMotion">—</strong>
+                                <small>average</small>
+                            </div>
 
-                    <div class="metrics-strip">
-
-                        <div class="metric">
-
-                            <span class="metric-label">
-                                REPS
-                            </span>
-
-                            <strong id="repCount">
-                                0
-                            </strong>
-
-                        </div>
-
-
-                        <div class="metric">
-
-                            <span class="metric-label">
-                                FORM SCORE
-                            </span>
-
-                            <strong id="formScore">
-                                —
-                            </strong>
-
-                        </div>
-
-
-                        <div class="metric">
-
-                            <span class="metric-label">
-                                RANGE OF MOTION
-                            </span>
-
-                            <strong id="rangeOfMotion">
-                                —
-                            </strong>
-
-                        </div>
-
-
-                        <div class="metric">
-
-                            <span class="metric-label">
-                                TEMPO
-                            </span>
-
-                            <strong id="tempo">
-                                —
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- =================================================
-     AI FEEDBACK
-================================================== -->
-
-                    <div id="analysisFeedback" class="analysis-feedback" aria-live="polite">
-
-                        <div class="analysis-feedback-header">
-
-                            <div>
-                                <span class="analysis-feedback-label">
-                                    AI COACH
-                                </span>
-
-                                <h3>
-                                    Form Insights
-                                </h3>
+                            <div class="ws-metric">
+                                <span class="ws-label">Tempo</span>
+                                <strong id="tempo">—</strong>
+                                <small>per rep</small>
                             </div>
 
                         </div>
 
-                        <div id="analysisFeedbackText" class="analysis-feedback-list">
-                            <div class="analysis-feedback-item">
-                                Upload a workout video to receive form feedback.
+                        <div id="analysisFeedback" class="ws-feedback" aria-live="polite">
+
+                            <div class="ws-feedback-head">
+                                <span class="ws-label">AI Coach</span>
+                                <h4>Form insights</h4>
                             </div>
+
+                            <div id="analysisFeedbackText" class="analysis-feedback-list">
+                                <div class="analysis-feedback-item">
+                                    Tracking your movement… insights appear when the video finishes.
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="ws-error" role="alert">
+                            <strong>We couldn't analyze this video</strong>
+                            <p>This usually means the camera angle or framing wasn't right. Try again with:</p>
+                            <ul>
+                                <li>a true side view</li>
+                                <li>your whole body in frame</li>
+                                <li>the phone held still</li>
+                            </ul>
+                        </div>
+
+                        <div class="ws-actions">
+                            <button type="button" class="button button-primary" id="analyzeAnotherBtn">
+                                Analyze another video
+                            </button>
                         </div>
 
                     </div>
