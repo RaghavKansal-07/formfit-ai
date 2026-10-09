@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your account | FormFit AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body data-page="account">
+
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="barbell">
+
+                <div class="bb-end bb-end-left" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+                <div class="bb-bar">
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html" class="brand" aria-label="FormFit AI home">
+                        <strong>FormFit</strong><span>AI</span>
+                    </a>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <div class="nav-links">
+                        <a href="index.html#analyzer">Analyzer</a>
+                        <a href="index.html#how-it-works">How It Works</a>
+                        <a href="history.html">History</a>
+                    </div>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html#analyzer" class="nav-cta">
+                        <span class="nav-cta-text">Analyze Form</span>
+                        <span class="nav-cta-arrow">→</span>
+                    </a>
+
+                    <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu"
+                        aria-expanded="false" aria-controls="mobileNav">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+                </div>
+
+                <div class="bb-end bb-end-right" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- If your index.html mobile menu has different content, paste it here instead -->
+        <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+            <div class="mobile-nav-inner">
+                <div class="mobile-nav-links">
+                    <a href="index.html#analyzer"><span>Analyzer</span><span>→</span></a>
+                    <a href="index.html#how-it-works"><span>How It Works</span><span>→</span></a>
+                    <a href="history.html"><span>History</span><span>→</span></a>
+                </div>
+                <a href="index.html#analyzer" class="mobile-nav-cta">Analyze Form <span>→</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth">
+
+        <!-- LEFT: brand panel -->
+        <aside class="auth-art" aria-hidden="true">
+            <img class="auth-photo" src="assets/account-athlete.jpg" alt="">
+        </aside>
+
+        <!-- RIGHT: form -->
+        <section class="auth-card">
+
+            <div class="acc-top">
+                <div class="acc-avatar" id="accAvatar">F</div>
+                <div>
+                    <h1 id="accName">Your account</h1>
+                    <p id="accEmail"></p>
+                </div>
+            </div>
+
+            <div class="acc-stats">
+                <div><span>Saved sessions</span><strong id="accSessions">0</strong></div>
+                <div><span>Member since</span><strong id="accSince">—</strong></div>
+            </div>
+
+            <form id="authForm" novalidate>
+                <p class="auth-msg" id="authMsg" role="alert" hidden></p>
+
+                <label class="auth-field"><span>Full name</span>
+                    <div class="auth-input"><input type="text" id="name" autocomplete="name"></div>
+                </label>
+
+                <label class="auth-field"><span>Email</span>
+                    <div class="auth-input"><input type="email" id="email" autocomplete="email"></div>
+                </label>
+
+                <label class="auth-field">
+                    <span>New password (optional)</span>
+                    <div class="auth-input">
+                        <input type="password" id="password" class="has-toggle" autocomplete="new-password"
+                            placeholder="Leave empty to keep your password">
+                        <button type="button" class="auth-toggle" data-toggle="password">Show</button>
+                    </div>
+                </label>
+                <div class="auth-meter" id="meter" data-level="0"><i></i><small></small></div>
+
+                <button type="submit" class="auth-submit" id="authSubmit"><span>Save changes</span><i
+                        aria-hidden="true">→</i></button>
+            </form>
+
+            <div class="acc-actions">
+                <button type="button" class="acc-btn" id="logoutBtn">Log out</button>
+                <button type="button" class="acc-btn danger" id="deleteBtn">Delete account</button>
+            </div>
+        </section>
+
+    </main>
+
+    <dialog id="deleteDialog" class="del-dialog" aria-labelledby="delTitle">
+        <div class="del-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3" />
+            </svg>
+        </div>
+
+        <h3 id="delTitle">Delete your account?</h3>
+        <p class="del-text">This permanently removes everything stored under your account. You can't undo it.</p>
+
+        <ul class="del-list">
+            <li><b id="delSessions">0</b> saved workouts</li>
+            <li>Your profile, email and password</li>
+            <li>Your login on this device</li>
+        </ul>
+
+        <label class="del-confirm">
+            <span>Type <b>DELETE</b> to confirm</span>
+            <input type="text" id="deleteConfirmInput" autocomplete="off" spellcheck="false" placeholder="DELETE">
+        </label>
+
+        <div class="del-actions">
+            <button type="button" class="acc-btn" id="deleteCancel">Keep my account</button>
+            <button type="button" class="del-danger" id="deleteConfirm" disabled>Delete everything</button>
+        </div>
+    </dialog>
+
+    <script type="module" src="nav-auth.js"></script>
+    <script type="module" src="auth.js"></script>
+</body>
+
+</html>
