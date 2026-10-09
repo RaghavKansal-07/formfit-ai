@@ -1,44 +1,113 @@
+<div align="center">
+
 # FormFit AI
 
-### AI-Powered Exercise Form Analyzer
+### AI-powered exercise form analyzer
 
-FormFit AI is a web-based AI fitness application that analyzes exercise videos using computer vision and pose estimation. Everything runs **in the browser**: videos are never uploaded anywhere.
+*Upload a workout video and get rep-by-rep feedback on your technique, right in your browser.*
 
-The application detects exercise repetitions and evaluates important aspects of movement technique, including:
+<br>
 
-- Range of motion
-- Body and joint stability
-- Posture
-- Movement tempo
-- Exercise-specific form
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-0097A7?style=for-the-badge&logo=google&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-2D5652?style=for-the-badge)
 
-FormFit AI currently supports **squats** and **bicep curls**.
+<br>
 
-**Live demo:** https://raghavkansal-07.github.io/formfit-ai/
+[**Live demo**](https://raghavkansal-07.github.io/formfit-ai/) &nbsp;|&nbsp; [**Features**](#features) &nbsp;|&nbsp; [**Run locally**](#running-locally) &nbsp;|&nbsp; [**Guidelines checklist**](#guidelines-checklist)
+
+</div>
 
 ---
 
-## Problem Statement
+## Table of Contents
 
-When exercising without a trainer, it can be difficult to determine whether an exercise is being performed with proper technique.
+1. [About the Project](#about-the-project)
+2. [Features](#features)
+3. [Screenshots](#screenshots)
+4. [How It Works](#how-it-works)
+5. [How Scoring Works](#how-scoring-works)
+6. [Tech Stack](#tech-stack)
+7. [Data Storage](#data-storage)
+8. [CRUD Operations](#crud-operations)
+9. [Guidelines Checklist](#guidelines-checklist)
+10. [Pages](#pages)
+11. [Project Structure](#project-structure)
+12. [Running Locally](#running-locally)
+13. [Responsive Design](#responsive-design)
+14. [Limitations](#limitations)
+15. [Author](#author)
 
-FormFit AI provides automated visual feedback by analyzing recorded exercise videos and identifying important movement characteristics. The system uses human pose landmarks extracted from video frames to detect repetitions and evaluate exercise form.
+---
+
+## About the Project
+
+When exercising without a trainer, it is hard to tell whether an exercise is being done with proper technique.
+
+**FormFit AI** is a web application that analyzes recorded exercise videos using computer vision and pose estimation. It detects each repetition and evaluates:
+
+- **Range of motion**
+- **Body and joint stability**
+- **Posture**
+- **Movement tempo**
+- **Exercise-specific form**
+
+Currently supported exercises: **squats** and **bicep curls**.
+
+> **Privacy:** all analysis runs in your browser. Your videos are never uploaded anywhere.
 
 ---
 
 ## Features
 
-- **Video analysis:** upload a side-view video and get a form score, a rep count, range of motion and tempo.
-- **Rep-by-rep breakdown:** a radar chart, score bars, a tempo split, joint measurements and coach notes for every repetition, with a "Watch this rep" playback.
-- **Save workouts:** save any analysis to your history.
-- **History page:** summary stats, a form-score trend chart, an exercise filter, and edit and delete for each session.
-- **Accounts:** sign up, log in with an optional "Remember me", edit your profile, log out and delete your account.
-- **Guest mode:** analyze and save workouts without an account. Guest workouts move into your account when you sign up or log in.
-- **Responsive design:** built for mobile, tablet and desktop.
+| | Feature | Details |
+|---|---|---|
+| 🎥 | **Video analysis** | Upload a side-view video and get a form score, rep count, range of motion and tempo |
+| 🔍 | **Rep-by-rep breakdown** | Radar chart, score bars, tempo split, joint measurements and coach notes for every rep, plus a "Watch this rep" playback |
+| 💾 | **Save workouts** | Save any analysis to your history with one click |
+| 📈 | **History page** | Summary stats, a form-score trend chart, an exercise filter, and edit and delete for each session |
+| 👤 | **Accounts** | Sign up, log in with an optional "Remember me", edit your profile, log out and delete your account |
+| 🧑‍🤝‍🧑 | **Guest mode** | Analyze and save workouts without an account; they move into your account when you sign up or log in |
+| 🔔 | **Pop-up messages** | Friendly confirmations after saving changes, logging in and logging out |
+| 📱 | **Responsive design** | Layouts for mobile, tablet and desktop |
+
+---
+
+## Screenshots
+
+<!--
+Add your screenshots to docs/screenshots/ with these exact names,
+then delete this comment line and the closing line below.
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/home.png" alt="Home page"><br><b>Home</b></td>
+    <td align="center"><img src="docs/screenshots/results.png" alt="Analyzer results"><br><b>Analyzer results</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/history.png" alt="History page"><br><b>History</b></td>
+    <td align="center"><img src="docs/screenshots/account.png" alt="Account page"><br><b>Account</b></td>
+  </tr>
+</table>
+-->
+
+*Screenshots coming soon.*
 
 ---
 
 ## How It Works
+
+```mermaid
+flowchart LR
+    A[Exercise video] --> B[MediaPipe pose detection]
+    B --> C[Landmark smoothing]
+    C --> D[Joint angle calculation]
+    D --> E[Rep detection]
+    E --> F[Rep-by-rep analysis]
+    F --> G[Form score and feedback]
+```
 
 1. The user uploads an exercise video.
 2. The video is processed frame by frame.
@@ -49,32 +118,29 @@ FormFit AI provides automated visual feedback by analyzing recorded exercise vid
 7. Each detected repetition is analyzed.
 8. A form score and feedback are generated.
 
-### Processing Pipeline
+---
 
-```text
-Exercise Video
-      |
-      v
-MediaPipe Pose Detection
-      |
-      v
-Pose Landmarks
-      |
-      v
-Landmark Smoothing
-      |
-      v
-Joint Angle Calculation
-      |
-      v
-Exercise Rep Detection
-      |
-      v
-Rep-by-Rep Form Analysis
-      |
-      v
-Form Score + Feedback
-```
+## How Scoring Works
+
+Each repetition receives a **form score from 0 to 100**. The overall score is the average of all reps.
+
+**Squat**
+
+| Component | Weight | What it measures |
+|---|---|---|
+| Depth | 45% | Knee angle and how far the hips descend, relative to thigh length |
+| Torso control | 25% | Forward lean of the torso |
+| Hip position | 15% | Hip angle through the movement |
+| Bottom stability | 15% | How steady the knee angle stays at the bottom of the rep |
+
+**Bicep curl** is scored on elbow stability, torso control, total range of motion and tempo.
+
+| Score | Verdict |
+|---|---|
+| 90 and above | Excellent |
+| 75 to 89 | Good |
+| 60 to 74 | Fair |
+| Below 60 | Needs work |
 
 ---
 
@@ -83,10 +149,10 @@ Form Score + Feedback
 | Layer | Technology |
 |---|---|
 | Markup | HTML5 |
-| Styling | CSS3 (custom properties, Flexbox, Grid, media queries, animations) |
-| Logic | Vanilla JavaScript (ES modules, async/await) |
+| Styling | CSS3: custom properties, Flexbox, Grid, media queries, animations |
+| Logic | Vanilla JavaScript: ES modules, async/await |
 | Pose estimation | MediaPipe Pose Landmarker (runs in the browser) |
-| Passwords | Web Crypto API (PBKDF2, SHA-256, random salt) |
+| Passwords | Web Crypto API: PBKDF2, SHA-256, random salt |
 
 No frameworks or build tools are used.
 
@@ -99,7 +165,7 @@ No frameworks or build tools are used.
 | **IndexedDB** | `formfit-db` → `workouts` | Saved workouts: scores, reps, measurements, notes |
 | **localStorage** | `ff_users` | User accounts (name, email, salted password hash) |
 | **localStorage** | `ff_settings` | History exercise filter |
-| **Cookie** | `ff_session` | Login session (7 days with "Remember me", otherwise until the browser closes) |
+| **Cookie** | `ff_session` | Login session: 7 days with "Remember me", otherwise until the browser closes |
 | **sessionStorage** | `ff_flash` | One-time pop-up message passed between pages |
 
 ---
@@ -110,19 +176,34 @@ No frameworks or build tools are used.
 
 | Operation | Where |
 |---|---|
-| Create | "Save workout" button on the analyzer results |
-| Read | History page: stats, trend chart and session list |
-| Update | History page: edit a session's title and notes |
-| Delete | History page: delete a session, with confirmation |
+| **Create** | "Save workout" button on the analyzer results |
+| **Read** | History page: stats, trend chart and session list |
+| **Update** | History page: edit a session's title and notes |
+| **Delete** | History page: delete a session, with confirmation |
 
 **User accounts (localStorage + cookie)**
 
 | Operation | Where |
 |---|---|
-| Create | Signup page |
-| Read | Login page |
-| Update | Account page: edit name, email or password |
-| Delete | Account page: delete account (type `DELETE` to confirm) |
+| **Create** | Signup page |
+| **Read** | Login page |
+| **Update** | Account page: edit name, email or password |
+| **Delete** | Account page: delete account (type `DELETE` to confirm) |
+
+---
+
+## Guidelines Checklist
+
+| Requirement | Status | Where |
+|---|---|---|
+| HTML, CSS and JavaScript tech stack | ✅ | No frameworks; plain HTML, CSS and JS modules |
+| Features covered in class | ✅ | DOM manipulation, events, forms and validation, Flexbox, Grid, media queries, animations, async/await, ES modules |
+| Responsive for mobile, tablet and desktop | ✅ | Breakpoints at about 1200px, 950px and 600px |
+| At least 2 pages | ✅ | Home, History, Login, Signup and Account |
+| Web storage, cookie and IndexedDB | ✅ | See [Data Storage](#data-storage) |
+| CRUD operations | ✅ | See [CRUD Operations](#crud-operations) |
+| Code on GitHub with commits on different days | ✅ | See the repository's commit history |
+| Project details in README.md (Markdown) | ✅ | This file |
 
 ---
 
@@ -139,6 +220,9 @@ No frameworks or build tools are used.
 ---
 
 ## Project Structure
+
+<details>
+<summary><b>Click to expand the folder tree</b></summary>
 
 ```text
 FitnessAI/
@@ -166,6 +250,8 @@ FitnessAI/
 └── assets/              # Images
 ```
 
+</details>
+
 ---
 
 ## Running Locally
@@ -189,17 +275,7 @@ Then open `http://localhost:5500`.
 
 ## Responsive Design
 
-The layout adapts at three main breakpoints (about 1200px, 950px and 600px) and was tested on desktop, tablet and phone widths. On smaller screens the navbar collapses into a menu, card grids stack, and the login/signup artwork is hidden.
-
-<!--
-## Screenshots
-Add images to docs/screenshots/ and uncomment:
-
-![Home](docs/screenshots/home.png)
-![Analyzer results](docs/screenshots/results.png)
-![History](docs/screenshots/history.png)
-![Account](docs/screenshots/account.png)
--->
+The layout adapts at three main breakpoints (about 1200px, 950px and 600px). On smaller screens the navbar collapses into a menu, card grids stack, and the login and signup artwork is hidden.
 
 ---
 
@@ -215,8 +291,19 @@ Add images to docs/screenshots/ and uncomment:
 
 ## Author
 
-**Raghav Kansal**
+**Raghav Kansal**  
+GitHub: [@RaghavKansal-07](https://github.com/RaghavKansal-07)
+
+Pose estimation is powered by [MediaPipe](https://developers.google.com/mediapipe) from Google.
 
 ## License
 
 Released under the [MIT License](LICENSE).
+
+<div align="center">
+
+<br>
+
+*Train with more awareness.*
+
+</div>
