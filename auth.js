@@ -6,6 +6,7 @@
 import {
     signup,
     login,
+    googleSignIn,
     logout,
     getCurrentUser,
     updateProfile,
@@ -171,12 +172,42 @@ if (page === "account") {
     else {
 
         const fill = (u) => {
-            $("accAvatar").textContent = u.name.charAt(0).toUpperCase();
+            setAvatar(u);
             $("accName").textContent = u.name;
             $("accEmail").textContent = u.email;
             $("name").value = u.name;
             $("email").value = u.email;
         };
+
+        // avatar: Google photo if there is one, otherwise the first letter
+        function setAvatar(u) {
+            const el = $("accAvatar");
+            el.textContent = "";
+
+            if (u.picture) {
+                const img = document.createElement("img");
+                img.src = u.picture;
+                img.alt = "";
+                img.referrerPolicy = "no-referrer";
+                img.onerror = () => { el.textContent = u.name.charAt(0).toUpperCase(); };
+                el.appendChild(img);
+            } else {
+                el.textContent = u.name.charAt(0).toUpperCase();
+            }
+        }
+
+        // accounts made with Google have no password and a fixed email
+        if (user.provider === "google") {
+            $("password").closest(".auth-field").hidden = true;
+            $("meter").hidden = true;
+            $("email").readOnly = true;
+            $("email").title = "Managed by your Google account";
+
+            const note = document.createElement("small");
+            note.className = "auth-google-note";
+            note.textContent = "Signed in with Google. Your email and password are managed by Google.";
+            $("authMsg").after(note);
+        }
 
         fill(user);
 
@@ -264,4 +295,127 @@ if (page === "account") {
             location.assign("index.html");
         });
     }
+}
+
+
+
+// ============================================================
+// GOOGLE SIGN-IN  (signup and login pages)
+// ============================================================
+
+const GOOGLE_CLIENT_ID =
+    "488339339167-trleruvrpb86erfi00ekh1ta9vq5tmvs.apps.googleusercontent.com";
+
+// read the data inside the token Google gives us
+function decodeJwt(token) {
+    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+
+    const json = decodeURIComponent(
+        atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+    );
+
+    return JSON.parse(json);
+}
+
+async function handleGoogleCredential(response) {
+
+    const note = $("googleNote");
+
+    try {
+        const data = decodeJwt(response.credential);
+
+        // basic checks (a real server would verify the signature too)
+        const issuerOk =
+            data.iss === "https://accounts.google.com" ||
+            data.iss === "accounts.google.com";
+
+        if (!issuerOk || data.aud !== GOOGLE_CLIENT_ID) {
+            throw new Error("Google sign-in could not be verified.");
+        }
+
+        if (data.exp * 1000 < Date.now()) {
+            throw new Error("Google sign-in expired. Please try again.");
+        }
+
+        if (!data.email || data.email_verified === false) {
+            throw new Error("Your Google email is not verified.");
+        }
+
+        const { user: account, isNew } = await googleSignIn({
+            name: data.name,
+            email: data.email,
+            picture: data.picture
+        });
+
+        sessionStorage.setItem("ff_flash", JSON.stringify({
+            title: isNew ? "Account created" : "Logged in successfully",
+            text: "Welcome" + (isNew ? "" : " back") + ", " + account.name.split(" ")[0] + ".",
+            time: Date.now()
+        }));
+
+        location.assign(nextPage());
+
+    } catch (error) {
+        if (note) {
+            note.textContent = error.message || "Google sign-in failed. Please try again.";
+            note.hidden = false;
+            note.classList.add("is-error");
+        }
+    }
+}
+
+function setupGoogleButton() {
+
+    const holder = $("googleBtn");
+
+    if (!holder) return;
+
+    const note = $("googleNote");
+
+    let tries = 0;
+
+    // the Google script loads asynchronously, so wait for it
+    const timer = setInterval(() => {
+
+        if (window.google && google.accounts && google.accounts.id) {
+
+            clearInterval(timer);
+
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleCredential
+            });
+
+            const width = Math.max(220, Math.min(400, holder.clientWidth || 320));
+
+            google.accounts.id.renderButton(holder, {
+                theme: "outline",
+                size: "large",
+                shape: "pill",
+                text: "continue_with",
+                logo_alignment: "left",
+                width
+            });
+
+            return;
+        }
+
+        tries += 1;
+
+        if (tries > 40) {                       // about 8 seconds
+            clearInterval(timer);
+
+            if (note) {
+                note.textContent = "Google sign-in is unavailable right now. Check your internet connection.";
+                note.hidden = false;
+            }
+        }
+    }, 200);
+}
+
+if (page === "login" || page === "signup") {
+    setupGoogleButton();
 }

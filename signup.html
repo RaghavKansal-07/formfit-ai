@@ -104,23 +104,31 @@
                     <div class="auth-input"><input type="email" id="email" autocomplete="email" required></div>
                 </label>
 
-            <label class="auth-field">
-                <span>Password</span>
-                <div class="auth-input">
-                    <input type="password" id="password" class="has-toggle" autocomplete="new-password" required placeholder="At least 8 characters">
-                    <button type="button" class="auth-toggle" data-toggle="password">Show</button>
-                </div>
-            </label>
-            <div class="auth-meter" id="meter" data-level="0"><i></i><small></small></div>
+                <label class="auth-field">
+                    <span>Password</span>
+                    <div class="auth-input">
+                        <input type="password" id="password" class="has-toggle" autocomplete="new-password" required
+                            placeholder="At least 8 characters">
+                        <button type="button" class="auth-toggle" data-toggle="password">Show</button>
+                    </div>
+                </label>
+                <div class="auth-meter" id="meter" data-level="0"><i></i><small></small></div>
 
-                <button type="submit" class="auth-submit" id="authSubmit"><span>Create account</span><i aria-hidden="true">→</i></button>
+                <button type="submit" class="auth-submit" id="authSubmit"><span>Create account</span><i
+                        aria-hidden="true">→</i></button>
             </form>
+
+            <div class="auth-or"><span>or</span></div>
+
+            <div class="auth-google" id="googleBtn" aria-label="Continue with Google"></div>
+            <p class="auth-google-note" id="googleNote" hidden></p>
 
             <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
         </section>
 
     </main>
 
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="module" src="nav-auth.js"></script>
     <script type="module" src="auth.js"></script>
 </body>

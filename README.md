@@ -69,6 +69,7 @@ Currently supported exercises: **squats** and **bicep curls**.
 | 💾 | **Save workouts** | Save any analysis to your history with one click |
 | 📈 | **History page** | Summary stats, a form-score trend chart, an exercise filter, and edit and delete for each session |
 | 👤 | **Accounts** | Sign up, log in with an optional "Remember me", edit your profile, log out and delete your account |
+| 🔐 | **Google sign-in** | Create an account or log in with one click using "Continue with Google" |
 | 🧑‍🤝‍🧑 | **Guest mode** | Analyze and save workouts without an account; they move into your account when you sign up or log in |
 | 🔔 | **Pop-up messages** | Friendly confirmations after saving changes, logging in and logging out |
 | 📱 | **Responsive design** | Layouts for mobile, tablet and desktop |
@@ -158,6 +159,7 @@ Each repetition receives a **form score from 0 to 100**. The overall score is th
 | Logic | Vanilla JavaScript: ES modules, async/await |
 | Pose estimation | MediaPipe Pose Landmarker (runs in the browser) |
 | Passwords | Web Crypto API: PBKDF2, SHA-256, random salt |
+| Social sign-in | Google Identity Services |
 
 No frameworks or build tools are used.
 
@@ -168,7 +170,7 @@ No frameworks or build tools are used.
 | Storage type | Name | Used for |
 |---|---|---|
 | **IndexedDB** | `formfit-db` → `workouts` | Saved workouts: scores, reps, measurements, notes |
-| **localStorage** | `ff_users` | User accounts (name, email, salted password hash) |
+| **localStorage** | `ff_users` | User accounts (name, email, salted password hash, or Google profile) |
 | **localStorage** | `ff_settings` | History exercise filter |
 | **Cookie** | `ff_session` | Login session: 7 days with "Remember me", otherwise until the browser closes |
 | **sessionStorage** | `ff_flash` | One-time pop-up message passed between pages |
@@ -287,6 +289,7 @@ The layout adapts at three main breakpoints (about 1200px, 950px and 600px). On 
 ## Limitations
 
 - Accounts are stored in the browser only, so they are **not secure** and are not shared between devices. A real product would use a server.
+- Google sign-in reads the token in the browser. A production app would verify it on a server.
 - Clearing site data deletes saved workouts and accounts.
 - Analysis works best with a clear **side-view** video where the whole body is visible.
 - Only squats and bicep curls are supported; other exercises on the page are marked "Coming soon".
