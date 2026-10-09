@@ -1028,3 +1028,23 @@
 .hist-dialog {
     margin: auto;
 }
+
+.hist-insights-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    color: var(--navy);
+    font-size: 14px;
+    font-weight: 800;
+    border-bottom: 2px solid var(--yellow);
+    padding-bottom: 2px;
+}
+
+.hist-insights-link span {
+    transition: transform 0.25s ease;
+}
+
+.hist-insights-link:hover span {
+    transform: translateX(4px);
+}
