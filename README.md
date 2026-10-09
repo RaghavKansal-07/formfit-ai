@@ -29,16 +29,17 @@
 3. [Screenshots](#screenshots)
 4. [How It Works](#how-it-works)
 5. [How Scoring Works](#how-scoring-works)
-6. [Tech Stack](#tech-stack)
-7. [Data Storage](#data-storage)
-8. [CRUD Operations](#crud-operations)
-9. [Guidelines Checklist](#guidelines-checklist)
-10. [Pages](#pages)
-11. [Project Structure](#project-structure)
-12. [Running Locally](#running-locally)
-13. [Responsive Design](#responsive-design)
-14. [Limitations](#limitations)
-15. [Author](#author)
+6. [Form Insights](#form-insights)
+7. [Tech Stack](#tech-stack)
+8. [Data Storage](#data-storage)
+9. [CRUD Operations](#crud-operations)
+10. [Guidelines Checklist](#guidelines-checklist)
+11. [Pages](#pages)
+12. [Project Structure](#project-structure)
+13. [Running Locally](#running-locally)
+14. [Responsive Design](#responsive-design)
+15. [Limitations](#limitations)
+16. [Author](#author)
 
 ---
 
@@ -67,6 +68,7 @@ Currently supported exercises: **squats** and **bicep curls**.
 | 🎥 | **Video analysis** | Upload a side-view video and get a form score, rep count, range of motion and tempo |
 | 🔍 | **Rep-by-rep breakdown** | Radar chart, score bars, tempo split, joint measurements and coach notes for every rep, plus a "Watch this rep" playback |
 | 💾 | **Save workouts** | Save any analysis to your history with one click |
+| 🧠 | **Form insights** | A radar profile of your strengths, a 12-week consistency calendar with streaks, trend charts, a written coach summary and a downloadable report card |
 | 📈 | **History page** | Summary stats, a form-score trend chart, an exercise filter, and edit and delete for each session |
 | 👤 | **Accounts** | Sign up, log in with an optional "Remember me", edit your profile, log out and delete your account |
 | 🔐 | **Google sign-in** | Create an account or log in with one click using "Continue with Google" |
@@ -150,6 +152,21 @@ Each repetition receives a **form score from 0 to 100**. The overall score is th
 
 ---
 
+## Form Insights
+
+The Insights page turns your saved workouts into a clear picture of your progress. Everything is calculated in the browser from the workouts stored in IndexedDB.
+
+| Block | What it shows | How it is calculated |
+|---|---|---|
+| **Form profile** | A radar chart of your average scores | Latest 5 sessions (solid) compared with earlier sessions (dashed) |
+| **Strongest / Focus next** | Your best and weakest area with a tip | Highest and lowest of the four average scores |
+| **Consistency** | A 12-week calendar and your streaks | Best score per day; the current streak counts back from today or yesterday |
+| **Trends** | Line charts for form score and each area | Average of the latest 3 sessions against the 3 before |
+| **Coach summary** | A short written summary | Rule-based sentence templates filled with your numbers |
+| **Report card** | A downloadable image of your progress | Drawn on an HTML canvas and saved as a PNG |
+
+---
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -171,7 +188,7 @@ No frameworks or build tools are used.
 |---|---|---|
 | **IndexedDB** | `formfit-db` → `workouts` | Saved workouts: scores, reps, measurements, notes |
 | **localStorage** | `ff_users` | User accounts (name, email, salted password hash, or Google profile) |
-| **localStorage** | `ff_settings` | History exercise filter |
+| **localStorage** | `ff_settings` | History filter and the exercise chosen on the Insights page |
 | **Cookie** | `ff_session` | Login session: 7 days with "Remember me", otherwise until the browser closes |
 | **sessionStorage** | `ff_flash` | One-time pop-up message passed between pages |
 
@@ -220,6 +237,7 @@ No frameworks or build tools are used.
 |---|---|
 | `index.html` | Landing page and the video analyzer |
 | `history.html` | Saved workouts, stats and trend chart |
+| `insights.html` | Form insights: profile, consistency, trends and report card |
 | `login.html` | Log in |
 | `signup.html` | Create an account |
 | `account.html` | Profile, log out and delete account |
@@ -235,17 +253,21 @@ No frameworks or build tools are used.
 FitnessAI/
 ├── index.html           # Landing page + analyzer
 ├── history.html         # Workout history
+├── insights.html        # Form insights
 ├── login.html           # Log in
 ├── signup.html          # Sign up
 ├── account.html         # Account page
 ├── style.css            # Main styles
 ├── history.css          # History page styles
+├── insights.css         # Insights page styles
 ├── auth.css             # Login / signup / account styles
 ├── script.js            # Analyzer controller
 ├── state.js             # Shared analyzer state
 ├── constants.js
 ├── db.js                # IndexedDB, localStorage and cookie layer
 ├── history.js           # History page logic
+├── insights.js          # Insights page interface
+├── insights-data.js     # Insights calculations (profile, trends, heatmap, streaks)
 ├── auth.js              # Login / signup / account logic
 ├── nav-auth.js          # Navbar login state + pop-up messages
 ├── core/                # Pose model setup, video processing, drawing
@@ -290,6 +312,7 @@ The layout adapts at three main breakpoints (about 1200px, 950px and 600px). On 
 
 - Accounts are stored in the browser only, so they are **not secure** and are not shared between devices. A real product would use a server.
 - Google sign-in reads the token in the browser. A production app would verify it on a server.
+- Insights are calculated from your saved sessions, so they need a few workouts (ideally on different days) to be meaningful. The coach summary is written from rules and templates, not machine learning.
 - Clearing site data deletes saved workouts and accounts.
 - Analysis works best with a clear **side-view** video where the whole body is visible.
 - Only squats and bicep curls are supported; other exercises on the page are marked "Coming soon".
