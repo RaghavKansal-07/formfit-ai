@@ -77,10 +77,6 @@ Currently supported exercises: **squats** and **bicep curls**.
 
 ## Screenshots
 
-<!--
-Add your screenshots to docs/screenshots/ with these exact names,
-then delete this comment line and the closing line below.
-
 <table>
   <tr>
     <td align="center"><img src="docs/screenshots/home.png" alt="Home page"><br><b>Home</b></td>
@@ -91,9 +87,6 @@ then delete this comment line and the closing line below.
     <td align="center"><img src="docs/screenshots/account.png" alt="Account page"><br><b>Account</b></td>
   </tr>
 </table>
--->
-
-*Screenshots coming soon.*
 
 ---
 
