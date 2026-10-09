@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up | FormFit AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+
+<body data-page="signup">
+
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="barbell">
+
+                <div class="bb-end bb-end-left" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+                <div class="bb-bar">
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html" class="brand" aria-label="FormFit AI home">
+                        <strong>FormFit</strong><span>AI</span>
+                    </a>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <div class="nav-links">
+                        <a href="index.html#analyzer">Analyzer</a>
+                        <a href="index.html#how-it-works">How It Works</a>
+                        <a href="history.html">History</a>
+                    </div>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html#analyzer" class="nav-cta">
+                        <span class="nav-cta-text">Analyze Form</span>
+                        <span class="nav-cta-arrow">→</span>
+                    </a>
+
+                    <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu"
+                        aria-expanded="false" aria-controls="mobileNav">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+                </div>
+
+                <div class="bb-end bb-end-right" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- If your index.html mobile menu has different content, paste it here instead -->
+        <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+            <div class="mobile-nav-inner">
+                <div class="mobile-nav-links">
+                    <a href="index.html#analyzer"><span>Analyzer</span><span>→</span></a>
+                    <a href="index.html#how-it-works"><span>How It Works</span><span>→</span></a>
+                    <a href="history.html"><span>History</span><span>→</span></a>
+                </div>
+                <a href="index.html#analyzer" class="mobile-nav-cta">Analyze Form <span>→</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="auth">
+
+        <!-- LEFT: brand panel -->
+        <aside class="auth-art" aria-hidden="true">
+            <img class="auth-photo" src="assets/signup-athlete.png" alt="">
+        </aside>
+
+        <!-- RIGHT: form -->
+        <section class="auth-card">
+
+            <h1>Create your account</h1>
+            <p class="auth-sub">Keep every analysis in one place and watch your form improve.</p>
+
+            <form id="authForm" novalidate>
+                <p class="auth-msg" id="authMsg" role="alert" hidden></p>
+
+                <label class="auth-field"><span>Full name</span>
+                    <div class="auth-input"><input type="text" id="name" autocomplete="name" required></div>
+                </label>
+
+                <label class="auth-field"><span>Email</span>
+                    <div class="auth-input"><input type="email" id="email" autocomplete="email" required></div>
+                </label>
+
+            <label class="auth-field">
+                <span>Password</span>
+                <div class="auth-input">
+                    <input type="password" id="password" class="has-toggle" autocomplete="new-password" required placeholder="At least 8 characters">
+                    <button type="button" class="auth-toggle" data-toggle="password">Show</button>
+                </div>
+            </label>
+            <div class="auth-meter" id="meter" data-level="0"><i></i><small></small></div>
+
+                <button type="submit" class="auth-submit" id="authSubmit"><span>Create account</span><i aria-hidden="true">→</i></button>
+            </form>
+
+            <p class="auth-switch">Already have an account? <a href="login.html">Log in</a></p>
+        </section>
+
+    </main>
+
+    <script type="module" src="nav-auth.js"></script>
+    <script type="module" src="auth.js"></script>
+</body>
+
+</html>
