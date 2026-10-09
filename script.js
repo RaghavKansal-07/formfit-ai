@@ -115,6 +115,12 @@ import {
     resetAnalysisState
 } from "./state.js";
 
+import {
+    createWorkout,
+    buildWorkoutRecord,
+    isLoggedIn
+} from "./db.js";
+
 
 // ============================================================
 // DOM ELEMENTS
@@ -173,6 +179,63 @@ const workspaceStateByStatus = {
     error: "error"
 };
 
+const WORKSPACE_COPY = {
+    idle: {
+        step: "02", label: "Video upload",
+        title: "Show us your <em>movement.</em>",
+        sub: "Record from a clear side view for the most reliable analysis."
+    },
+    analyzing: {
+        step: "02", label: "Analysis",
+        title: "Reading your <em>form…</em>",
+        sub: "We're tracking every joint while your video plays."
+    },
+    results: {
+        step: "03", label: "Your report",
+        title: "Here's your <em>form report.</em>",
+        sub: "Scores, a rep-by-rep breakdown and coaching notes from your set."
+    },
+    error: {
+        step: "02", label: "Analysis",
+        title: "Let's try <em>that again.</em>",
+        sub: "We couldn't get a reliable read on this video."
+    }
+};
+
+function applyWorkspaceCopy(state) {
+
+    const copy = WORKSPACE_COPY[state] ?? WORKSPACE_COPY.idle;
+
+    const step = document.getElementById("wsStep");
+    const label = document.getElementById("wsEyebrow");
+    const title = document.getElementById("wsTitle");
+    const sub = document.getElementById("wsSub");
+
+    if (step) step.textContent = copy.step;
+    if (label) label.textContent = copy.label;
+    if (title) title.innerHTML = copy.title;
+    if (sub) sub.textContent = copy.sub;
+}
+
+function setWorkspaceState(next) {
+
+    if (!analyzerWorkspace || analyzerWorkspace.dataset.state === next) {
+        return;
+    }
+
+    analyzerWorkspace.dataset.state = next;
+
+    if (next !== "results") {
+        delete analyzerWorkspace.dataset.tier;
+    }
+
+    applyWorkspaceCopy(next);
+
+    if (next === "results") {
+        renderResults();
+    }
+}
+
 function syncWorkspaceState(status) {
 
     if (!analyzerWorkspace) {
@@ -183,33 +246,16 @@ function syncWorkspaceState(status) {
     const next = workspaceStateByStatus[status] ?? "idle";
 
     // Late AI initialization must not pull the user back to the upload view.
-    if (next === "idle" && current !== "idle") {
-        return;
-    }
+    if (next === "idle" && current !== "idle") return;
 
-    // An error before any video exists (e.g. AI failed to load)
-    // should not hide the upload view.
-    if (next === "error" && !video.getAttribute("src")) {
-        return;
-    }
+    // An error before any video exists should not hide the upload view.
+    if (next === "error" && !video.getAttribute("src")) return;
 
-    // Replaying a finished video fires "processing" again.
-    // Keep showing the results. A new upload resets the state itself.
-    if (
-        next === "analyzing" &&
-        (current === "results" || current === "error")
-    ) {
-        return;
-    }
+    // Replaying a finished video fires "processing" again: keep the results.
+    // A new upload sets the state itself.
+    if (next === "analyzing" && (current === "results" || current === "error")) return;
 
-    analyzerWorkspace.dataset.state = next;
-
-    if (
-        next === "results" &&
-        scoreVerdictElement?.textContent === "Measuring…"
-    ) {
-        scoreVerdictElement.textContent = "No reps detected";
-    }
+    setWorkspaceState(next);
 }
 
 function updateAnalysisStatus(status) {
@@ -285,247 +331,94 @@ const analysisFeedbackText =
 // UPDATE ANALYZER METRICS
 // ============================================================
 
+let latestAnalyzedReps = [];
+
+function averageOf(reps, ...keys) {
+
+    const values = [];
+
+    reps.forEach((rep) => {
+        for (const key of keys) {
+            const raw = rep?.[key];
+            if (raw == null) continue;
+            const value = Number(raw);
+            if (Number.isFinite(value)) {
+                values.push(value);
+                return;
+            }
+        }
+    });
+
+    return values.length
+        ? values.reduce((sum, v) => sum + v, 0) / values.length
+        : null;
+}
+
 function updateAnalyzerMetrics(analyzedReps) {
 
-    if (
-        !Array.isArray(analyzedReps) ||
-        analyzedReps.length === 0
-    ) {
+    latestAnalyzedReps = Array.isArray(analyzedReps) ? analyzedReps : [];
 
-        if (repCountElement) {
-            repCountElement.textContent = "0";
-        }
+    const reps = latestAnalyzedReps;
 
-        if (formScoreElement) {
-            formScoreElement.textContent = "—";
-        }
+    if (analysisFeedbackText) {
+        analysisFeedbackText.innerHTML = "";
+    }
 
-        if (rangeOfMotionElement) {
-            rangeOfMotionElement.textContent = "—";
-        }
-
-        if (tempoElement) {
-            tempoElement.textContent = "—";
-        }
-
-        if (analysisFeedbackText) {
-
-            analysisFeedbackText.innerHTML = "";
-
-            const feedbackItem =
-                document.createElement("div");
-
-            feedbackItem.className =
-                "analysis-feedback-item";
-
-            feedbackItem.textContent =
-                "No complete reps were detected. Try a side view with your full body in frame.";
-
-            analysisFeedbackText.appendChild(
-                feedbackItem
-            );
-        }
-
-        animateMetricValues();
-
+    if (reps.length === 0) {
+        setText(repCountElement, "0");
+        setText(formScoreElement, "—");
+        setText(rangeOfMotionElement, "—");
+        setText(tempoElement, "—");
         return;
     }
 
+    const score = averageOf(reps, "formScore");
+    const rom = averageOf(reps, "rangeOfMotion", "rom");
+    const tempo = averageOf(reps, "duration");
 
-    // --------------------------------------------------------
-    // REP COUNT
-    // --------------------------------------------------------
+    setText(repCountElement, String(reps.length));
+    setText(formScoreElement, score !== null ? score.toFixed(1) : "—");
+    setText(rangeOfMotionElement, rom !== null ? `${rom.toFixed(1)}°` : "—");
+    setText(tempoElement, tempo !== null ? `${tempo.toFixed(1)}s` : "—");
 
-    const repCount =
-        analyzedReps.length;
+    const feedback = [...new Set(
+        reps
+            .flatMap((rep) => Array.isArray(rep.feedback) ? rep.feedback : [])
+            .filter((text) => typeof text === "string" && text.trim().length > 0)
+    )];
 
-
-    // --------------------------------------------------------
-    // AVERAGE FORM SCORE
-    // --------------------------------------------------------
-
-    const formScores =
-        analyzedReps
-            .map(
-                (rep) =>
-                    Number(rep.formScore)
-            )
-            .filter(
-                (score) =>
-                    Number.isFinite(score)
-            );
-
-
-    const averageFormScore =
-        formScores.length > 0
-            ? formScores.reduce(
-                (sum, score) =>
-                    sum + score,
-                0
-            ) / formScores.length
-            : null;
-
-
-    // --------------------------------------------------------
-    // UPDATE REP COUNT
-    // --------------------------------------------------------
-
-    if (repCountElement) {
-        repCountElement.textContent =
-            repCount;
+    if (!analysisFeedbackText) {
+        return;
     }
 
-
-    // --------------------------------------------------------
-    // UPDATE FORM SCORE
-    // --------------------------------------------------------
-
-    if (formScoreElement) {
-
-        formScoreElement.textContent =
-            averageFormScore !== null
-                ? averageFormScore.toFixed(1)
-                : "—";
+    if (feedback.length === 0) {
+        const item = document.createElement("div");
+        item.className = "analysis-feedback-item";
+        item.textContent = "No specific form feedback available.";
+        analysisFeedbackText.appendChild(item);
+        return;
     }
 
+    feedback.forEach((text) => {
 
-    // --------------------------------------------------------
-    // RANGE OF MOTION
-    // --------------------------------------------------------
+        const normalized = text.toLowerCase();
 
-    const rangeOfMotionValues =
-        analyzedReps
-            .map(
-                (rep) =>
-                    Number(rep.rangeOfMotion)
-            )
-            .filter(
-                (value) =>
-                    Number.isFinite(value)
-            );
+        const isPositive =
+            normalized.startsWith("good ") ||
+            normalized.startsWith("great ") ||
+            normalized.startsWith("excellent ") ||
+            normalized.includes("good squat mechanics");
 
-    const averageRangeOfMotion =
-        rangeOfMotionValues.length > 0
-            ? rangeOfMotionValues.reduce(
-                (sum, value) =>
-                    sum + value,
-                0
-            ) / rangeOfMotionValues.length
-            : null;
+        const item = document.createElement("div");
 
-    if (rangeOfMotionElement) {
-        rangeOfMotionElement.textContent =
-            averageRangeOfMotion !== null
-                ? `${averageRangeOfMotion.toFixed(1)}°`
-                : "—";
-    }
+        item.className = isPositive
+            ? "analysis-feedback-item is-positive"
+            : "analysis-feedback-item is-correction";
 
+        item.textContent = text;
 
-    // ============================================================
-    // TEMPO
-    // ============================================================
-
-    const durationValues =
-        analyzedReps
-            .map(
-                (rep) =>
-                    Number(rep.duration)
-            )
-            .filter(
-                (value) =>
-                    Number.isFinite(value)
-            );
-
-    const averageDuration =
-        durationValues.length > 0
-            ? durationValues.reduce(
-                (sum, value) =>
-                    sum + value,
-                0
-            ) / durationValues.length
-            : null;
-
-    if (tempoElement) {
-        tempoElement.textContent =
-            averageDuration !== null
-                ? `${averageDuration.toFixed(1)}s`
-                : "—";
-    }
-
-    // ============================================================
-    // AI FEEDBACK
-    // ============================================================
-
-    // ============================================================
-    // AI FEEDBACK
-    // ============================================================
-
-    const feedbackItems =
-        analyzedReps
-            .flatMap(
-                (rep) =>
-                    Array.isArray(rep.feedback)
-                        ? rep.feedback
-                        : []
-            )
-            .filter(
-                (feedback) =>
-                    typeof feedback === "string" &&
-                    feedback.trim().length > 0
-            );
-
-    const uniqueFeedback =
-        [...new Set(feedbackItems)];
-
-    if (analysisFeedbackText) {
-
-        analysisFeedbackText.innerHTML = "";
-
-        if (uniqueFeedback.length > 0) {
-
-            uniqueFeedback.forEach((feedback) => {
-
-                const feedbackItem =
-                    document.createElement("div");
-
-                const normalizedFeedback =
-                    feedback.toLowerCase();
-
-                const isPositive =
-                    normalizedFeedback.startsWith("good ") ||
-                    normalizedFeedback.includes("good squat mechanics");
-
-                feedbackItem.className =
-                    isPositive
-                        ? "analysis-feedback-item is-positive"
-                        : "analysis-feedback-item is-correction";
-
-                feedbackItem.textContent =
-                    feedback;
-
-                analysisFeedbackText.appendChild(
-                    feedbackItem
-                );
-
-            });
-
-        } else {
-
-            const feedbackItem =
-                document.createElement("div");
-
-            feedbackItem.className =
-                "analysis-feedback-item";
-
-            feedbackItem.textContent =
-                "No specific form feedback available.";
-
-            analysisFeedbackText.appendChild(
-                feedbackItem
-            );
-
-        }
-    }
+        analysisFeedbackText.appendChild(item);
+    });
 }
 
 
@@ -925,6 +818,14 @@ videoInput.addEventListener(
                     "processing"
                 );
 
+                // ------------------------------------------------
+                // FRESH LANDMARKER FOR THIS VIDEO
+                // ------------------------------------------------
+
+                if (!(await prepareLandmarkerForNewVideo())) {
+                    return;
+                }
+
 
                 // ------------------------------------------------
                 // START PLAYBACK
@@ -1066,6 +967,13 @@ video.addEventListener(
         }
 
 
+        const workspaceState = analyzerWorkspace?.dataset.state;
+
+        if (workspaceState === "results" || workspaceState === "error") {
+            return;
+        }
+
+
         console.log(
             "Starting / resuming pose analysis..."
         );
@@ -1126,6 +1034,12 @@ video.addEventListener(
         setIsProcessingVideo(
             false
         );
+
+        const workspaceState = analyzerWorkspace?.dataset.state;
+
+        if (workspaceState === "results" || workspaceState === "error") {
+            return;
+        }
 
 
         console.log(
@@ -1388,6 +1302,8 @@ video.addEventListener(
             setCompleteReps(
                 reps
             );
+
+            latestRawReps = reps;
 
 
             console.log(
@@ -1956,6 +1872,8 @@ video.addEventListener(
             setCompleteReps(
                 reps
             );
+
+            latestRawReps = reps;
 
 
             // ==================================================
@@ -2673,7 +2591,7 @@ animateHeroMetrics();
 
 
 // ============================================================
-// ANALYZER WORKSPACE — TWO-STATE UI
+// ANALYZER WORKSPACE — TWO-STATE UI (v2)
 // ============================================================
 
 const fileNameElement = document.getElementById("fileName");
@@ -2682,18 +2600,30 @@ const dropErrorElement = document.getElementById("dropError");
 const replaceVideoButton = document.getElementById("replaceVideoBtn");
 const removeVideoButton = document.getElementById("removeVideoBtn");
 const analyzeAnotherButton = document.getElementById("analyzeAnotherBtn");
-const processingStageElement = document.getElementById("processingStage");
+const retryVideoButton = document.getElementById("retryVideoBtn");
 const progressElement = document.querySelector(".ws-progress");
 const videoStageElement = video.closest(".video-stage");
 
-const TRACKING_TEXT =
-    "Tracking your movement… insights appear when the video finishes.";
+const scoreSummaryElement = document.getElementById("scoreSummary");
+const heroChipsElement = document.getElementById("heroChips");
+const repDotsElement = document.getElementById("repDots");
+const repStripElement = document.getElementById("repStrip");
+const insightCountsElement = document.getElementById("insightCounts");
+const priorityFixElement = document.getElementById("priorityFix");
+const priorityTextElement = document.getElementById("priorityText");
+
+let resultsAnimated = false;
+let landmarkerHasBeenUsed = false;
 
 
 // ---------- helpers ----------
 
+function setText(element, text) {
+    if (element) element.textContent = text;
+}
+
 function formatDuration(seconds) {
-    const total = Math.round(seconds);
+    const total = Math.floor(seconds);
     const m = Math.floor(total / 60);
     const s = String(total % 60).padStart(2, "0");
     return `${m}:${s}`;
@@ -2704,10 +2634,7 @@ function formatSize(bytes) {
 }
 
 function scrollWorkspaceIntoView() {
-    analyzerWorkspace?.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
+    analyzerWorkspace?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function showDropError(message) {
@@ -2717,44 +2644,54 @@ function showDropError(message) {
 }
 
 function hideDropError() {
-    if (!dropErrorElement) return;
-    dropErrorElement.hidden = true;
+    if (dropErrorElement) dropErrorElement.hidden = true;
 }
+
+function tierOf(score) {
+    return score >= 75 ? "high" : score >= 60 ? "mid" : "low";
+}
+
+function verdictOf(score) {
+    return score >= 90 ? "Excellent"
+        : score >= 75 ? "Good"
+            : score >= 60 ? "Fair"
+                : "Needs work";
+}
+
+
+// ---------- reset ----------
 
 function resetResultsUI() {
 
-    if (repCountElement) repCountElement.textContent = "0";
+    resetSaveButton();
 
-    [formScoreElement, rangeOfMotionElement, tempoElement].forEach((el) => {
-        if (el) el.textContent = "—";
-    });
+    resultsAnimated = false;
+    latestAnalyzedReps = [];
 
-    if (scoreRingElement) {
-        scoreRingElement.style.setProperty("--score", "0");
-        delete scoreRingElement.dataset.tier;
-    }
+    setText(repCountElement, "0");
+    setText(formScoreElement, "—");
+    setText(rangeOfMotionElement, "—");
+    setText(tempoElement, "—");
 
-    if (scoreVerdictElement) scoreVerdictElement.textContent = "Measuring…";
+    scoreRingElement?.style.setProperty("--score", "0");
 
-    if (progressElement) progressElement.style.setProperty("--progress", "0");
+    if (analyzerWorkspace) delete analyzerWorkspace.dataset.tier;
 
-    if (processingStageElement) {
-        processingStageElement.textContent = "Tracking movement";
-    }
+    setText(scoreVerdictElement, "Measuring…");
+    setText(scoreSummaryElement, "Tracking every joint as the video plays.");
 
-    if (analysisFeedbackText) {
-        analysisFeedbackText.innerHTML = "";
+    [heroChipsElement, repDotsElement, repStripElement,
+        insightCountsElement, analysisFeedbackText].forEach((el) => {
+            if (el) el.innerHTML = "";
+        });
 
-        const item = document.createElement("div");
-        item.className = "analysis-feedback-item";
-        item.textContent = TRACKING_TEXT;
+    if (priorityFixElement) priorityFixElement.hidden = true;
 
-        analysisFeedbackText.appendChild(item);
-    }
+    progressElement?.style.setProperty("--progress", "0");
 }
 
 
-// ---------- count-up animation for the results ----------
+// ---------- count-up animation ----------
 
 function animateMetricValue(element, onFrame) {
 
@@ -2763,18 +2700,18 @@ function animateMetricValue(element, onFrame) {
     const finalText = element.textContent.trim();
     const match = finalText.match(/^(-?\d+(?:\.\d+)?)(.*)$/);
 
-    if (!match) return;                      // "—" etc.
+    if (!match) return;
 
     const target = parseFloat(match[1]);
     const suffix = match[2];
     const decimals = (match[1].split(".")[1] || "").length;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        if (onFrame) onFrame(target);
+        onFrame?.(target);
         return;
     }
 
-    const duration = 900;
+    const duration = 1100;
     const start = performance.now();
 
     function frame(now) {
@@ -2784,13 +2721,13 @@ function animateMetricValue(element, onFrame) {
         const value = target * eased;
 
         element.textContent = value.toFixed(decimals) + suffix;
-        if (onFrame) onFrame(value);
+        onFrame?.(value);
 
         if (t < 1) {
             requestAnimationFrame(frame);
         } else {
             element.textContent = finalText;
-            if (onFrame) onFrame(target);
+            onFrame?.(target);
         }
     }
 
@@ -2799,21 +2736,8 @@ function animateMetricValue(element, onFrame) {
 
 function animateMetricValues() {
 
-    const score = parseFloat(formScoreElement?.textContent);
-
-    if (Number.isFinite(score)) {
-
-        const tier = score >= 75 ? "high" : score >= 60 ? "mid" : "low";
-
-        const verdict =
-            score >= 90 ? "Excellent"
-                : score >= 75 ? "Good"
-                    : score >= 60 ? "Fair"
-                        : "Needs work";
-
-        if (scoreRingElement) scoreRingElement.dataset.tier = tier;
-        if (scoreVerdictElement) scoreVerdictElement.textContent = verdict;
-    }
+    if (resultsAnimated) return;
+    resultsAnimated = true;
 
     animateMetricValue(repCountElement);
     animateMetricValue(rangeOfMotionElement);
@@ -2825,6 +2749,564 @@ function animateMetricValues() {
             Math.min(100, value).toFixed(1)
         );
     });
+}
+
+
+// ---------- render the finished report ----------
+
+function renderInsights() {
+
+    const list = analysisFeedbackText;
+
+    const fixes = [...list.querySelectorAll(".is-correction")];
+    const goods = [...list.querySelectorAll(".is-positive")];
+
+    const makeLabel = (kind, text) => {
+        const label = document.createElement("div");
+        label.className = `rs-group-label rs-group-label--${kind}`;
+        label.textContent = text;
+        return label;
+    };
+
+    if (fixes.length) list.appendChild(makeLabel("fix", `Fix next · ${fixes.length}`));
+    if (goods.length) list.appendChild(makeLabel("good", `Doing well · ${goods.length}`));
+
+    insightCountsElement.innerHTML = "";
+
+    if (fixes.length) {
+        const chip = document.createElement("span");
+        chip.className = "rs-count rs-count--fix";
+        chip.textContent = `${fixes.length} to refine`;
+        insightCountsElement.appendChild(chip);
+    }
+
+    if (goods.length) {
+        const chip = document.createElement("span");
+        chip.className = "rs-count rs-count--good";
+        chip.textContent = `${goods.length} strong`;
+        insightCountsElement.appendChild(chip);
+    }
+
+    if (fixes.length) {
+        priorityTextElement.textContent = fixes[0].textContent;
+        priorityFixElement.hidden = false;
+    } else {
+        priorityFixElement.hidden = true;
+    }
+
+    return { fixes, goods };
+}
+
+// ---------- per-rep breakdown ----------
+
+const repDetailElement = document.getElementById("repDetail");
+
+let latestRawReps = [];     // raw detector output (start / bottom / end times)
+let repRecords = [];        // analyzed + raw data merged, one entry per rep
+let segmentWatcher = null;
+
+const esc = (value) =>
+    String(value).replace(/[&<>"']/g, (c) => (
+        { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+
+function num(value) {
+    if (value == null || value === "") return null;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
+}
+
+function confidenceOf(rep) {
+    const c = rep.confidence;
+    if (typeof c === "number") return c <= 1 ? c * 100 : c;
+    if (c && Number.isFinite(c.overall)) return c.overall * 100;
+    return null;
+}
+
+function formatClock(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = (seconds % 60).toFixed(1).padStart(4, "0");
+    return `${m}:${s}`;
+}
+
+function isPositiveFeedback(text) {
+    const t = text.toLowerCase();
+    return t.startsWith("good ") || t.startsWith("great ") ||
+        t.startsWith("excellent ") || t.includes("good squat mechanics");
+}
+
+function formatTile(value, fmt) {
+
+    if (fmt === "text") {
+        if (value == null || value === "") return null;
+        const text = String(value);
+        return text.charAt(0).toUpperCase() + text.slice(1);
+    }
+
+    const n = num(value);
+    if (n === null) return null;
+
+    switch (fmt) {
+        case "deg": return `${n.toFixed(1)}°`;
+        case "ratio": return n.toFixed(3);
+        case "sec": return `${n.toFixed(2)}s`;
+        case "pct": return `${Math.round(n)}%`;
+        default: return n.toFixed(1);
+    }
+}
+
+// What to show for each exercise. A row or tile is skipped automatically
+// if the rep has no value for it, so a missing field never breaks the UI.
+const REP_METRICS = {
+
+    squat: {
+        mid: "bottomTime",
+        phases: ["Descent", "Ascent"],
+        scores: [
+            { label: "Depth", short: "Depth", get: (r) => r.depthScore },
+            { label: "Knee position", short: "Knee", get: (r) => r.kneeScore },
+            { label: "Hip position", short: "Hip", get: (r) => r.hipScore },
+            { label: "Torso control", short: "Torso", get: (r) => r.torsoScore },
+            { label: "Bottom stability", short: "Stability", get: (r) => r.bottomStabilityScore }
+        ],
+        tiles: [
+            { label: "Knee angle", fmt: "deg", get: (r) => r.primaryKneeAngle ?? r.bottomKneeAngle },
+            { label: "Hip angle", fmt: "deg", get: (r) => r.primaryHipAngle },
+            { label: "Torso angle", fmt: "deg", get: (r) => r.torsoAngle },
+            { label: "Depth ratio", fmt: "ratio", get: (r) => r.depthRatio },
+            { label: "Hip asymmetry", fmt: "deg", get: (r) => r.hipDifference },
+            { label: "Duration", fmt: "sec", get: (r) => r.duration },
+            { label: "Camera side", fmt: "text", get: (r) => r.primarySide },
+            { label: "Tracking confidence", fmt: "pct", get: confidenceOf }
+        ]
+    },
+
+    "bicep-curl": {
+        mid: "topTime",
+        phases: ["Curl up", "Lower"],
+        scores: [
+            { label: "Elbow stability", short: "Elbow", get: (r) => r.elbowStability?.score },
+            { label: "Torso control", short: "Torso", get: (r) => r.torso?.score },
+            { label: "Range of motion", short: "ROM", get: (r) => r.totalRom?.score },
+            { label: "Tempo", short: "Tempo", get: (r) => r.tempo?.score }
+        ],
+        tiles: [
+            { label: "Top elbow angle", fmt: "deg", get: (r) => r.topAngle ?? r.topElbowAngle },
+            { label: "Bottom elbow angle", fmt: "deg", get: (r) => r.bottomAngle ?? r.bottomElbowAngle },
+            { label: "Range of motion", fmt: "deg", get: (r) => r.rom },
+            { label: "Max elbow drift", fmt: "ratio", get: (r) => r.elbowStability?.maxDrift },
+            { label: "Max torso lean", fmt: "deg", get: (r) => r.torso?.maxLean },
+            { label: "Duration", fmt: "sec", get: (r) => r.duration },
+            { label: "Arm", fmt: "text", get: (r) => r.side ?? r.primarySide },
+            { label: "Tracking confidence", fmt: "pct", get: confidenceOf }
+        ]
+    }
+};
+
+function radarSVG(axes, showAverage) {
+
+    const n = axes.length;
+    const cx = 140, cy = 118, r = 78;
+
+    const angleOf = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
+
+    const point = (i, value, radius = r) => {
+        const rr = (radius * Math.max(0, Math.min(100, value))) / 100;
+        return [cx + rr * Math.cos(angleOf(i)), cy + rr * Math.sin(angleOf(i))];
+    };
+
+    const fmt = (p) => p.map((c) => c.toFixed(1)).join(",");
+
+    const poly = (values) => values.map((v, i) => fmt(point(i, v))).join(" ");
+
+    const rings = [25, 50, 75, 100]
+        .map((p) => `<polygon class="ring" points="${poly(axes.map(() => p))}"/>`)
+        .join("");
+
+    const spokes = axes
+        .map((_, i) => {
+            const [x, y] = point(i, 100);
+            return `<line class="axis" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;
+        })
+        .join("");
+
+    const average = showAverage
+        ? `<polygon class="avg" points="${poly(axes.map((a) => a.avg ?? a.value))}"/>`
+        : "";
+
+    const dots = axes
+        .map((a, i) => {
+            const [x, y] = point(i, a.value);
+            return `<circle class="dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5"/>`;
+        })
+        .join("");
+
+    const labels = axes
+        .map((a, i) => {
+            const cos = Math.cos(angleOf(i));
+            const x = cx + (r + 18) * cos;
+            const y = cy + (r + 18) * Math.sin(angleOf(i)) + 4;
+            const anchor = cos > 0.3 ? "start" : cos < -0.3 ? "end" : "middle";
+            return `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${anchor}">${esc(a.short)}</text>`;
+        })
+        .join("");
+
+    return `<svg viewBox="0 0 280 240" role="img" aria-label="Score profile for this rep">
+        ${rings}${spokes}${average}
+        <polygon class="shape" points="${poly(axes.map((a) => a.value))}"/>
+        ${dots}${labels}
+    </svg>`;
+}
+
+function watchRep(start, end) {
+
+    if (segmentWatcher) {
+        video.removeEventListener("timeupdate", segmentWatcher);
+        segmentWatcher = null;
+    }
+
+    video.pause();
+    video.currentTime = Math.max(0, start - 0.15);
+
+    // the skeleton is only drawn live during analysis
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (Number.isFinite(end)) {
+
+        segmentWatcher = () => {
+            if (video.currentTime >= end + 0.1) {
+                video.pause();
+                video.removeEventListener("timeupdate", segmentWatcher);
+                segmentWatcher = null;
+            }
+        };
+
+        video.addEventListener("timeupdate", segmentWatcher);
+    }
+
+    video.play().catch(() => { });
+
+    if (window.innerWidth <= 950) {
+        document.querySelector(".ws-video-card")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+}
+
+function renderRepDetail(index) {
+
+    const rec = repRecords[index];
+
+    if (!rec || !repDetailElement) return;
+
+    const d = rec.data;
+    const cfg = REP_METRICS[getSelectedExercise()] ?? REP_METRICS.squat;
+    const multi = repRecords.length > 1;
+
+    const formScore = num(d.formScore);
+    const tier = formScore !== null ? tierOf(formScore) : "high";
+
+    // ----- score breakdown -----
+
+    const axes = cfg.scores
+        .map((s) => {
+
+            const value = num(s.get(d));
+
+            const others = repRecords
+                .map((r) => num(s.get(r.data)))
+                .filter((v) => v !== null);
+
+            const avg = others.length
+                ? others.reduce((sum, v) => sum + v, 0) / others.length
+                : null;
+
+            return { ...s, value, avg };
+        })
+        .filter((s) => s.value !== null);
+
+    const rowsHTML = axes.map((a) => `
+        <div class="rd-row" data-tier="${tierOf(a.value)}">
+            <div class="rd-row-top">
+                <span>${esc(a.label)}</span>
+                <strong>${Math.round(a.value)}</strong>
+            </div>
+            <div class="rd-track">
+                <i style="--w:${Math.max(2, Math.min(100, a.value)).toFixed(1)}"></i>
+                ${multi && a.avg !== null
+            ? `<b style="--a:${Math.max(0, Math.min(100, a.avg)).toFixed(1)}" title="Set average ${Math.round(a.avg)}"></b>`
+            : ""}
+            </div>
+        </div>`).join("");
+
+    const bodyHTML = axes.length
+        ? `<div class="rd-body">
+               ${axes.length >= 3
+            ? `<div class="rd-radar">${radarSVG(axes, multi)}</div>`
+            : ""}
+               <div class="rd-bars">
+                   ${rowsHTML}
+                   ${multi ? `<p class="rd-legend"><b></b> Your average across all reps</p>` : ""}
+               </div>
+           </div>`
+        : "";
+
+    // ----- timing -----
+
+    const t0 = num(d.startTime);
+    const t1 = num(d.endTime);
+    const tm = num(d[cfg.mid]);
+
+    const duration =
+        num(d.duration) ??
+        (t0 !== null && t1 !== null ? t1 - t0 : null);
+
+    const timeText = [
+        t0 !== null && t1 !== null
+            ? `${formatClock(t0)} – ${formatClock(t1)}`
+            : null,
+        duration !== null ? `${duration.toFixed(1)}s` : null
+    ].filter(Boolean).join(" · ");
+
+    const seekTo = [t0, tm].find((v) => v !== null);
+
+    const phasesHTML =
+        t0 !== null && tm !== null && t1 !== null && t0 < tm && tm < t1
+            ? `<div class="rd-section">
+                   <span class="ws-label">Tempo split</span>
+                   <div class="rd-phase-bar">
+                       <span style="flex:${(tm - t0).toFixed(2)}"><b>${cfg.phases[0]}</b>${(tm - t0).toFixed(1)}s</span>
+                       <span style="flex:${(t1 - tm).toFixed(2)}"><b>${cfg.phases[1]}</b>${(t1 - tm).toFixed(1)}s</span>
+                   </div>
+               </div>`
+            : "";
+
+    // ----- measurements -----
+
+    const tiles = cfg.tiles
+        .map((t) => ({ label: t.label, text: formatTile(t.get(d), t.fmt) }))
+        .filter((t) => t.text !== null);
+
+    const tilesHTML = tiles.length
+        ? `<div class="rd-section">
+               <span class="ws-label">Measurements</span>
+               <div class="rd-tiles">
+                   ${tiles.map((t) => `<div class="rd-tile"><span>${esc(t.label)}</span><strong>${esc(t.text)}</strong></div>`).join("")}
+               </div>
+           </div>`
+        : "";
+
+    // ----- notes for this rep -----
+
+    const notes = (Array.isArray(d.feedback) ? d.feedback : [])
+        .filter((t) => typeof t === "string" && t.trim().length > 0);
+
+    const fixes = notes.filter((t) => !isPositiveFeedback(t));
+    const goods = notes.filter(isPositiveFeedback);
+
+    const noteHTML = (text, positive) =>
+        `<div class="rd-note ${positive ? "is-positive" : "is-correction"}"><i>${positive ? "✓" : "!"}</i><span>${esc(text)}</span></div>`;
+
+    const notesHTML = notes.length
+        ? `<div class="rd-section">
+               <span class="ws-label">Coach notes for this rep</span>
+               <div class="rd-notes">
+                   ${fixes.map((t) => noteHTML(t, false)).join("")}
+                   ${goods.map((t) => noteHTML(t, true)).join("")}
+               </div>
+           </div>`
+        : "";
+
+    const emptyHTML = !axes.length && !tiles.length
+        ? `<p class="rd-empty">No detailed measurements were returned for this rep.</p>`
+        : "";
+
+    repDetailElement.innerHTML = `
+        <div class="rd" data-tier="${tier}">
+
+            <div class="rd-head">
+
+                <div class="rd-title">
+                    <span class="ws-label">Rep ${index + 1} of ${repRecords.length}</span>
+                    <h5>Rep ${esc(rec.n)}${formScore !== null ? `<span class="rd-badge">${verdictOf(formScore)}</span>` : ""}</h5>
+                    ${timeText ? `<p class="rd-time">${timeText}</p>` : ""}
+                    ${seekTo !== undefined
+            ? `<button type="button" class="rd-watch">
+                               <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1l9 5-9 5z"/></svg>
+                               Watch this rep
+                           </button>`
+            : ""}
+                </div>
+
+                ${formScore !== null
+            ? `<div class="rd-score"><strong>${formScore.toFixed(1)}</strong><span>form score</span></div>`
+            : ""}
+
+            </div>
+
+            ${bodyHTML}${phasesHTML}${tilesHTML}${notesHTML}${emptyHTML}
+
+        </div>`;
+
+    repDetailElement.querySelector(".rd-watch")
+        ?.addEventListener("click", () => watchRep(seekTo, t1));
+}
+
+function selectRep(index) {
+
+    repStripElement.querySelectorAll(".rs-rep").forEach((card, i) => {
+        card.classList.toggle("is-active", i === index);
+        card.setAttribute("aria-selected", String(i === index));
+    });
+
+    renderRepDetail(index);
+}
+
+function renderRepBreakdown(reps) {
+
+    // dots under the rep count
+    repDotsElement.innerHTML = "";
+    reps.slice(0, 12).forEach(() => repDotsElement.appendChild(document.createElement("i")));
+
+    if (reps.length > 12) {
+        const more = document.createElement("span");
+        more.textContent = `+${reps.length - 12}`;
+        repDotsElement.appendChild(more);
+    }
+
+    // merge analyzed reps with the raw detector output (times, bottom angle, ...)
+    repRecords = reps.map((analyzed, i) => {
+
+        const n = analyzed.repNumber ?? i + 1;
+
+        const raw =
+            latestRawReps.find((r) => r.repNumber === n) ??
+            latestRawReps[i] ??
+            {};
+
+        return { n, data: { ...raw, ...analyzed } };
+    });
+
+    // best / lowest chips
+    const scored = repRecords
+        .map((rec) => ({ n: rec.n, score: num(rec.data.formScore) }))
+        .filter((item) => item.score !== null);
+
+    heroChipsElement.innerHTML = "";
+
+    if (scored.length > 1) {
+
+        const best = scored.reduce((a, b) => (b.score > a.score ? b : a));
+        const low = scored.reduce((a, b) => (b.score < a.score ? b : a));
+
+        const addChip = (label, item) => {
+            const chip = document.createElement("span");
+            chip.className = "rs-chip";
+            chip.innerHTML = `<b>${label}</b> Rep ${item.n} · ${item.score.toFixed(1)}`;
+            heroChipsElement.appendChild(chip);
+        };
+
+        addChip("Best", best);
+        if (low.n !== best.n) addChip("Lowest", low);
+    }
+
+    // rep selector
+    repStripElement.innerHTML = "";
+
+    repRecords.forEach((rec, i) => {
+
+        const score = num(rec.data.formScore);
+
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = "rs-rep";
+        card.setAttribute("role", "tab");
+        card.setAttribute("aria-label", `Show details for rep ${rec.n}`);
+
+        if (score !== null) card.dataset.tier = tierOf(score);
+
+        card.innerHTML = `
+            <span class="rs-rep-n">Rep ${esc(rec.n)}</span>
+            <span class="rs-rep-bar"><i style="--h:${score !== null ? Math.max(4, Math.min(100, score)) : 0}"></i></span>
+            <strong>${score !== null ? Math.round(score) : "–"}</strong>`;
+
+        card.addEventListener("click", () => selectRep(i));
+
+        repStripElement.appendChild(card);
+    });
+
+    selectRep(0);
+}
+
+function renderResults() {
+
+    const reps = latestAnalyzedReps;
+
+    if (!reps.length) {
+        setText(scoreVerdictElement, "No reps detected");
+        setText(
+            scoreSummaryElement,
+            "We couldn't find a complete repetition. Try a side view with your full body in frame."
+        );
+        return;
+    }
+
+    const score = parseFloat(formScoreElement?.textContent);
+    const hasScore = Number.isFinite(score);
+
+    analyzerWorkspace.dataset.tier = hasScore ? tierOf(score) : "high";
+
+    setText(scoreVerdictElement, hasScore ? verdictOf(score) : "Analysis complete");
+
+    const { fixes, goods } = renderInsights();
+
+    const repWord = reps.length === 1 ? "rep" : "reps";
+
+    if (fixes.length) {
+        setText(
+            scoreSummaryElement,
+            `${reps.length} ${repWord} analyzed. ${fixes.length} ${fixes.length === 1 ? "thing" : "things"} to refine.`
+        );
+    } else if (goods.length) {
+        setText(scoreSummaryElement, `${reps.length} ${repWord} analyzed. No corrections needed.`);
+    } else {
+        setText(scoreSummaryElement, `${reps.length} ${repWord} analyzed.`);
+    }
+
+    renderRepBreakdown(reps);
+
+    animateMetricValues();
+}
+
+
+// ---------- MediaPipe: fresh landmarker for every new video ----------
+//
+// The first video uses the landmarker created at page load.
+// Every later video gets a new one, so stale timestamps / state from
+// the previous video can't break pose detection.
+
+async function prepareLandmarkerForNewVideo() {
+
+    if (!landmarkerHasBeenUsed) {
+        landmarkerHasBeenUsed = true;
+        return true;
+    }
+
+    try {
+
+        updateAnalysisStatus("loading");
+
+        await initializePoseLandmarker();
+
+        return true;
+
+    } catch (error) {
+
+        console.error("Could not re-initialize the pose landmarker:", error);
+
+        updateAnalysisStatus("error");
+
+        return false;
+    }
 }
 
 
@@ -2845,10 +3327,10 @@ videoInput.addEventListener("change", (event) => {
     hideDropError();
     resetResultsUI();
 
-    if (fileNameElement) fileNameElement.textContent = file.name;
-    if (fileMetaElement) fileMetaElement.textContent = formatSize(file.size);
+    setText(fileNameElement, file.name);
+    setText(fileMetaElement, formatSize(file.size));
 
-    analyzerWorkspace.dataset.state = "analyzing";
+    setWorkspaceState("analyzing");
 
     scrollWorkspaceIntoView();
 });
@@ -2866,40 +3348,32 @@ video.addEventListener("loadedmetadata", () => {
     ].filter(Boolean).join(" · ");
 });
 
-// Unreadable / unsupported file chosen from the picker.
+// Unreadable / unsupported file.
 video.addEventListener("error", () => {
     if (video.getAttribute("src")) {
         updateAnalysisStatus("error");
     }
 });
 
-// Progress bar follows playback, because analysis runs live while the video plays.
+// Progress follows playback, because analysis runs live while the video plays.
 video.addEventListener("timeupdate", () => {
 
-    if (
-        analyzerWorkspace?.dataset.state !== "analyzing" ||
-        !video.duration
-    ) {
+    if (analyzerWorkspace?.dataset.state !== "analyzing" || !video.duration) {
         return;
     }
 
-    const percent = Math.min(
-        100,
-        Math.round((video.currentTime / video.duration) * 100)
-    );
+    const percent = Math.min(100, Math.round((video.currentTime / video.duration) * 100));
 
     progressElement?.style.setProperty("--progress", String(percent));
 
-    if (processingStageElement) {
-        processingStageElement.textContent =
-            `Tracking movement · ${percent}%`;
+    if (analysisStatusElement?.textContent.startsWith("Processing")) {
+        analysisStatusElement.textContent = `Processing movement · ${percent}%`;
     }
 });
 
 // Keep the skeleton canvas aligned whenever the stage changes size.
 if (videoStageElement && "ResizeObserver" in window) {
-    new ResizeObserver(() => syncCanvasToVideo())
-        .observe(videoStageElement);
+    new ResizeObserver(() => syncCanvasToVideo()).observe(videoStageElement);
 }
 
 
@@ -2921,9 +3395,7 @@ if (uploadArea) {
         const file = event.dataTransfer?.files?.[0];
 
         if (file && !file.type.startsWith("video/")) {
-            showDropError(
-                "That file isn't a video. Please choose an MP4 or WebM file."
-            );
+            showDropError("That file isn't a video. Please choose an MP4 or WebM file.");
         } else {
             hideDropError();
         }
@@ -2931,7 +3403,7 @@ if (uploadArea) {
 }
 
 
-// ---------- file bar + results actions ----------
+// ---------- file bar + result actions ----------
 
 function clearVideo() {
 
@@ -2956,13 +3428,14 @@ function clearVideo() {
     resetResultsUI();
     hideDropError();
 
-    analyzerWorkspace.dataset.state = "idle";
+    setWorkspaceState("idle");
 
     updateAnalysisStatus("idle");
 }
 
 replaceVideoButton?.addEventListener("click", () => videoInput.click());
 analyzeAnotherButton?.addEventListener("click", () => videoInput.click());
+retryVideoButton?.addEventListener("click", () => videoInput.click());
 removeVideoButton?.addEventListener("click", clearVideo);
 
 
@@ -2974,6 +3447,74 @@ exerciseCards.forEach((card) => {
             scrollWorkspaceIntoView();
         }
     });
+});
+
+
+// ============================================================
+// SAVE WORKOUT (IndexedDB)
+// ============================================================
+
+const saveWorkoutButton = document.getElementById("saveWorkoutBtn");
+const saveStatusElement = document.getElementById("saveStatus");
+
+const SAVE_STATUS_DEFAULT =
+    "Want to compare? Save this set, then upload another.";
+
+function resetSaveButton() {
+    if (saveWorkoutButton) {
+        saveWorkoutButton.disabled = false;
+        saveWorkoutButton.textContent = "Save workout";
+    }
+    setText(saveStatusElement, SAVE_STATUS_DEFAULT);
+}
+
+saveWorkoutButton?.addEventListener("click", async () => {
+
+    const reps = latestAnalyzedReps;
+
+    if (!reps.length) {
+        setText(saveStatusElement, "There is nothing to save yet.");
+        return;
+    }
+
+    const exercise = getSelectedExercise();
+
+    const summary = {
+        formScore: averageOf(reps, "formScore"),
+        repCount: reps.length,
+        rangeOfMotion: averageOf(reps, "rangeOfMotion", "rom"),
+        tempo: averageOf(reps, "duration")
+    };
+
+    const exerciseName = exercise === "bicep-curl" ? "Bicep Curl" : "Squat";
+
+    try {
+
+        saveWorkoutButton.disabled = true;
+
+        await createWorkout({
+            ...buildWorkoutRecord({ exercise, summary, reps }),
+            title: `${exerciseName} session`,
+            videoName: videoInput.files?.[0]?.name ?? null
+        });
+
+        saveWorkoutButton.textContent = "Saved ✓";
+
+        setText(
+            saveStatusElement,
+            isLoggedIn()
+                ? "Saved to your history."
+                : "Saved on this device. Log in to keep it with your account."
+        );
+
+    } catch (error) {
+
+        console.error("Could not save workout:", error);
+
+        saveWorkoutButton.disabled = false;
+
+        setText(saveStatusElement, "Couldn't save this workout. Please try again.");
+    }
 });
 
 // ============================================================
