@@ -79,12 +79,24 @@ Currently supported exercises: **squats** and **bicep curls**.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/screenshots/home.png" alt="Home page"><br><b>Home</b></td>
-    <td align="center"><img src="docs/screenshots/results.png" alt="Analyzer results"><br><b>Analyzer results</b></td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/home.png" alt="Home page" width="100%"><br>
+      <sub><b>Home</b></sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/results.png" alt="Analyzer results" width="100%"><br>
+      <sub><b>Analyzer results</b></sub>
+    </td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/screenshots/history.png" alt="History page"><br><b>History</b></td>
-    <td align="center"><img src="docs/screenshots/account.png" alt="Account page"><br><b>Account</b></td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/history.png" alt="History page" width="100%"><br>
+      <sub><b>History</b></sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/screenshots/account.png" alt="Account page" width="100%"><br>
+      <sub><b>Account</b></sub>
+    </td>
   </tr>
 </table>
 
