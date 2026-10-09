@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Insights | FormFit AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="insights.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="barbell">
+
+                <div class="bb-end bb-end-left" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+                <div class="bb-bar">
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html" class="brand" aria-label="FormFit AI home">
+                        <strong>FormFit</strong><span>AI</span>
+                    </a>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <div class="nav-links">
+                        <a href="index.html#analyzer">Analyzer</a>
+                        <a href="index.html#how-it-works">How It Works</a>
+                        <a href="history.html">History</a>
+                    </div>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html#analyzer" class="nav-cta">
+                        <span class="nav-cta-text">Analyze Form</span>
+                        <span class="nav-cta-arrow">→</span>
+                    </a>
+
+                    <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu"
+                        aria-expanded="false" aria-controls="mobileNav">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+                </div>
+
+                <div class="bb-end bb-end-right" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- If your index.html mobile menu has different content, paste it here instead -->
+        <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+            <div class="mobile-nav-inner">
+                <div class="mobile-nav-links">
+                    <a href="index.html#analyzer"><span>Analyzer</span><span>→</span></a>
+                    <a href="index.html#how-it-works"><span>How It Works</span><span>→</span></a>
+                    <a href="history.html" class="is-active"><span>History</span><span>→</span></a>
+                </div>
+                <a href="index.html#analyzer" class="mobile-nav-cta">Analyze Form <span>→</span></a>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="ins-page">
+
+        <!-- INTRO -->
+        <section class="ins-intro">
+            <div>
+                <p class="ins-eyebrow">YOUR INSIGHTS</p>
+                <h1>What your workouts<em>are telling you.</em></h1>
+                <p class="ins-lead">Your saved sessions, turned into a clear picture of your strengths, your habits and
+                    what to work on next.</p>
+                <p class="ins-note" id="insNote"></p>
+            </div>
+
+            <div class="ins-seg" id="insSeg" role="tablist" aria-label="Choose an exercise">
+                <button type="button" role="tab" data-ex="squat">Squat <b id="cntSquat">0</b></button>
+                <button type="button" role="tab" data-ex="bicep-curl">Bicep curl <b id="cntCurl">0</b></button>
+            </div>
+        </section>
+
+
+        <!-- CONTENT -->
+        <div id="insContent" hidden>
+
+            <p class="ins-banner" id="insBanner" hidden></p>
+
+            <!-- PROFILE + STRONGEST / FOCUS -->
+            <section class="ins-top">
+
+                <article class="ins-card ins-profile" style="--i:0">
+                    <div class="ins-head">
+                        <div>
+                            <span class="ins-label">Form profile</span>
+                            <h2>Where you are strong</h2>
+                        </div>
+                        <div class="ins-score-pill"><span>Form score</span><strong id="scoreNow">—</strong><em
+                                id="scoreDelta"></em></div>
+                    </div>
+
+                    <svg id="radar" class="ins-radar" viewBox="0 0 400 330" role="img"
+                        aria-label="Radar chart of your average scores"></svg>
+
+                    <div class="ins-legend">
+                        <span><i class="now"></i>Latest 5 sessions</span>
+                        <span id="legendBefore"><i class="before"></i>Earlier sessions</span>
+                        <small>Scale: 40 to 100</small>
+                    </div>
+                </article>
+
+                <div class="ins-side">
+                    <article class="ins-card ins-strong" style="--i:1">
+                        <span class="ins-label">Strongest</span>
+                        <h3 id="strongName">—</h3>
+                        <div class="ins-big"><b id="strongVal">0</b><small>/ 100</small></div>
+                        <p id="strongText"></p>
+                    </article>
+
+                    <article class="ins-card ins-focus" style="--i:2">
+                        <span class="ins-label">Focus next</span>
+                        <h3 id="focusName">—</h3>
+                        <div class="ins-big"><b id="focusVal">0</b><small>/ 100</small></div>
+                        <p id="focusText"></p>
+                    </article>
+                </div>
+            </section>
+
+
+            <!-- CONSISTENCY -->
+            <section class="ins-card ins-consistency" style="--i:3">
+                <div class="ins-head">
+                    <div>
+                        <span class="ins-label">Consistency</span>
+                        <h2>The last 12 weeks</h2>
+                    </div>
+                </div>
+
+                <div class="ins-cons-body">
+                    <div>
+                        <div class="ins-heat" id="heat" aria-label="Workout calendar for the last 12 weeks"></div>
+                        <div class="ins-heat-legend">
+                            <span>Less</span>
+                            <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i>
+                            <span>Higher score</span>
+                        </div>
+                    </div>
+
+                    <div class="ins-streaks">
+                        <div><span>Current streak</span><strong><b id="streakNow">0</b> days</strong></div>
+                        <div><span>Best streak</span><strong><b id="streakBest">0</b> days</strong></div>
+                        <div><span>Active days</span><strong><b id="activeDays">0</b></strong></div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- TRENDS -->
+            <section class="ins-trends-wrap">
+                <div class="ins-head plain">
+                    <div>
+                        <span class="ins-label">Trends</span>
+                        <h2>Are you improving?</h2>
+                    </div>
+                    <small>Latest 3 sessions against the 3 before</small>
+                </div>
+
+                <div class="ins-trends" id="trends"></div>
+            </section>
+
+
+            <!-- COACH SUMMARY -->
+            <section class="ins-card ins-coach" style="--i:5">
+                <span class="ins-label">Coach summary</span>
+                <p id="coachText"></p>
+            </section>
+
+
+            <!-- REPORT CARD -->
+            <section class="ins-card ins-report" style="--i:6">
+                <div class="ins-report-copy">
+                    <span class="ins-label">Report card</span>
+                    <h2>Share your progress</h2>
+                    <p>A clean summary of your score, your best rep and your streak. It is saved as an image on your
+                        device, so you can keep it or send it to a friend.</p>
+                    <button type="button" class="ins-download" id="downloadBtn">
+                        <span>Download report card</span>
+                        <i aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 4v11M7 11l5 5 5-5M5 20h14" />
+                            </svg>
+                        </i>
+                    </button>
+                </div>
+
+                <canvas id="reportCanvas" width="1200" height="630" aria-label="Your report card preview"></canvas>
+            </section>
+
+        </div>
+
+
+        <!-- EMPTY STATE -->
+        <section class="ins-empty" id="insEmpty" hidden>
+            <div class="ins-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M4 19V9M10 19V5M16 19v-7M22 19H2" />
+                </svg>
+            </div>
+            <h2 id="emptyTitle">No insights yet</h2>
+            <p id="emptyText">Analyze a video and save the workout. Your insights appear here once you have a session.
+            </p>
+            <a href="index.html#analyzer" class="button button-primary">Analyze My Form <span>→</span></a>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-panel">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo" aria-label="FormFit AI home">
+                        <span class="footer-logo-mark">F</span>
+                        <span class="footer-logo-text">FormFit<span>AI</span></span>
+                    </a>
+                    <p class="footer-tagline">AI Fitness <em>Intelligence.</em></p>
+                    <p class="footer-desc">Turn every repetition into clear, understandable feedback on how you move.
+                    </p>
+                </div>
+
+                <nav class="footer-col" aria-label="Footer">
+                    <h4>Explore</h4>
+                    <a href="index.html#analyzer">Analyzer</a>
+                    <a href="index.html#how-it-works">How It Works</a>
+                    <a href="history.html">History</a>
+                </nav>
+
+                <div class="footer-col footer-cta">
+                    <h4>Get started</h4>
+                    <p>Upload a clip and see how you move.</p>
+                    <a href="index.html#analyzer" class="footer-button">
+                        <span>Analyze My Form</span>
+                        <span class="footer-button-arrow" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copy">© 2026 FormFit AI. All rights reserved.</p>
+                <a href="#" class="footer-top-link" aria-label="Back to top">
+                    Back to top
+                    <span aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 19V5M6 11l6-6 6 6" />
+                        </svg>
+                    </span>
+                </a>
+            </div>
+
+            <div class="footer-wordmark" aria-hidden="true">FormFit AI</div>
+        </div>
+    </footer>
+
+    <script type="module" src="nav-auth.js"></script>
+    <script type="module" src="insights.js"></script>
+</body>
+
+</html>

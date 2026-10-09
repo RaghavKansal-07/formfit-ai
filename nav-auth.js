@@ -10,6 +10,37 @@ const user = getCurrentUser();
 const label = user ? user.name.split(" ")[0] : "Login";
 const href = user ? "account.html" : "login.html";
 
+// Insights link: navbar, mobile menu and footer
+(function addInsightsLinks() {
+
+    const desktop = document.querySelector(".nav-links");
+
+    if (desktop) {
+        const a = document.createElement("a");
+        a.href = "insights.html";
+        a.textContent = "Insights";
+        desktop.appendChild(a);
+    }
+
+    const mobileList = document.querySelector(".mobile-nav-links");
+
+    if (mobileList) {
+        const a = document.createElement("a");
+        a.href = "insights.html";
+        a.innerHTML = "<span>Insights</span><span>→</span>";
+        mobileList.appendChild(a);
+    }
+
+    const footerCol = document.querySelector("nav.footer-col");
+
+    if (footerCol) {
+        const a = document.createElement("a");
+        a.href = "insights.html";
+        a.textContent = "Insights";
+        footerCol.appendChild(a);
+    }
+})();
+
 // desktop navbar
 const links = document.querySelector(".nav-links");
 
