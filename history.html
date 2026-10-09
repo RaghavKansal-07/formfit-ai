@@ -1,35 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workout History | FormFit AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="history.css">
 </head>
 
 <body>
-    <header>
-        <h1>FormFit AI</h1>
-        <p>Workout History</p>
 
-        <nav>
-            <a href="index.html">Analyzer</a>
-            <a href="history.html">History</a>
+    <!-- NAVIGATION (same as index.html, links point back to the home page) -->
+    <header class="site-header">
+        <nav class="navbar" aria-label="Main navigation">
+            <div class="barbell">
+
+                <div class="bb-end bb-end-left" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+                <div class="bb-bar">
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html" class="brand" aria-label="FormFit AI home">
+                        <strong>FormFit</strong><span>AI</span>
+                    </a>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <div class="nav-links">
+                        <a href="index.html#analyzer">Analyzer</a>
+                        <a href="index.html#how-it-works">How It Works</a>
+                        <a href="history.html">History</a>
+                    </div>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+
+                    <a href="index.html#analyzer" class="nav-cta">
+                        <span class="nav-cta-text">Analyze Form</span>
+                        <span class="nav-cta-arrow">→</span>
+                    </a>
+
+                    <button class="nav-menu-toggle" type="button" aria-label="Open navigation menu"
+                        aria-expanded="false" aria-controls="mobileNav">
+                        <span></span><span></span><span></span>
+                    </button>
+
+                    <span class="bb-grip" aria-hidden="true"></span>
+                </div>
+
+                <div class="bb-end bb-end-right" aria-hidden="true">
+                    <span class="bb-tip"></span>
+                    <span class="bb-plate bb-plate-teal"></span>
+                    <span class="bb-plate bb-plate-red"></span>
+                </div>
+
+            </div>
         </nav>
+
+        <!-- If your index.html mobile menu has different content, paste it here instead -->
+        <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+            <div class="mobile-nav-inner">
+                <div class="mobile-nav-links">
+                    <a href="index.html#analyzer"><span>Analyzer</span><span>→</span></a>
+                    <a href="index.html#how-it-works"><span>How It Works</span><span>→</span></a>
+                    <a href="history.html" class="is-active"><span>History</span><span>→</span></a>
+                </div>
+                <a href="index.html#analyzer" class="mobile-nav-cta">Analyze Form <span>→</span></a>
+            </div>
+        </div>
     </header>
 
-    <main>
-        <section>
-            <h2>Your Workout History</h2>
-            <p>
-                Your analyzed workouts will appear here once history
-                storage is implemented.
-            </p>
 
-            <div id="historyContainer">
-                <p>No workout history available yet.</p>
+    <main class="history-page">
+
+        <!-- INTRO -->
+        <section class="hist-intro">
+            <div>
+                <p class="eyebrow hist-eyebrow">YOUR HISTORY</p>
+                <h1>Your workouts,<em>over time.</em></h1>
+                <p class="hist-lead">Every saved session in one place. Look back, spot patterns and keep what matters.
+                </p>
+                <p class="hist-note" id="histNote"></p>
             </div>
+
+            <label class="hist-filter">
+                <span>Exercise</span>
+                <select id="filterSelect">
+                    <option value="all">All exercises</option>
+                    <option value="squat">Squat</option>
+                    <option value="bicep-curl">Bicep curl</option>
+                </select>
+            </label>
         </section>
+
+        <!-- CONTENT (hidden when empty) -->
+        <div id="histContent" hidden>
+
+            <section class="hist-stats" aria-label="Summary">
+                <div class="hist-stat"><span>Sessions</span><strong id="statSessions">0</strong></div>
+                <div class="hist-stat"><span>Average score</span><strong id="statAvg">—</strong></div>
+                <div class="hist-stat"><span>Best score</span><strong id="statBest">—</strong></div>
+                <div class="hist-stat"><span>Total reps</span><strong id="statReps">0</strong></div>
+            </section>
+
+            <section class="hist-chart-card" id="chartCard">
+                <div class="hist-card-head">
+                    <div>
+                        <span class="hist-label">Form score trend</span>
+                        <h2>How your form is moving</h2>
+                    </div>
+                    <small id="chartRange"></small>
+                </div>
+                <div id="chart"></div>
+            </section>
+
+            <section>
+                <div class="hist-card-head">
+                    <div>
+                        <span class="hist-label">Sessions</span>
+                        <h2>All workouts</h2>
+                    </div>
+                </div>
+                <div class="hist-list" id="histList"></div>
+            </section>
+
+        </div>
+
+        <!-- EMPTY STATE -->
+        <section class="hist-empty" id="histEmpty" hidden>
+            <div class="hist-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M4 17.5 9.5 12l3.5 3.5L20 8.5" />
+                    <path d="M15 8.5h5v5" />
+                </svg>
+            </div>
+            <h2>No workouts saved yet</h2>
+            <p id="emptyText">Analyze a video and press <b>Save workout</b>. It will show up here.</p>
+            <a href="index.html#analyzer" class="button button-primary">Analyze My Form <span>→</span></a>
+            <p class="hist-empty-login" id="emptyLogin">Already have an account? <a href="login.html">Log in</a></p>
+        </section>
+
     </main>
+
+
+    <!-- EDIT DIALOG -->
+    <dialog id="editDialog" class="hist-dialog">
+        <h3>Edit session</h3>
+        <label>Title<input type="text" id="editTitle" maxlength="60"></label>
+        <label>Notes<textarea id="editNotes" rows="4" maxlength="400"
+                placeholder="How did it feel? Anything to remember?"></textarea></label>
+        <div class="hist-dialog-actions">
+            <button type="button" class="button button-secondary" id="editCancel">Cancel</button>
+            <button type="button" class="button button-primary" id="editSave">Save changes</button>
+        </div>
+    </dialog>
+
+    <!-- DELETE DIALOG -->
+    <dialog id="deleteDialog" class="hist-dialog">
+        <h3>Delete this session?</h3>
+        <p>This removes it from your history. You can't undo it.</p>
+        <div class="hist-dialog-actions">
+            <button type="button" class="button button-secondary" id="deleteCancel">Keep it</button>
+            <button type="button" class="button hist-danger" id="deleteConfirm">Delete</button>
+        </div>
+    </dialog>
+
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-panel">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="index.html" class="footer-logo" aria-label="FormFit AI home">
+                        <span class="footer-logo-mark">F</span>
+                        <span class="footer-logo-text">FormFit<span>AI</span></span>
+                    </a>
+                    <p class="footer-tagline">AI Fitness <em>Intelligence.</em></p>
+                    <p class="footer-desc">Turn every repetition into clear, understandable feedback on how you move.
+                    </p>
+                </div>
+
+                <nav class="footer-col" aria-label="Footer">
+                    <h4>Explore</h4>
+                    <a href="index.html#analyzer">Analyzer</a>
+                    <a href="index.html#how-it-works">How It Works</a>
+                    <a href="history.html">History</a>
+                </nav>
+
+                <div class="footer-col footer-cta">
+                    <h4>Get started</h4>
+                    <p>Upload a clip and see how you move.</p>
+                    <a href="index.html#analyzer" class="footer-button">
+                        <span>Analyze My Form</span>
+                        <span class="footer-button-arrow" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M5 12h14M13 6l6 6-6 6" />
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="footer-copy">© 2026 FormFit AI. All rights reserved.</p>
+                <a href="#" class="footer-top-link" aria-label="Back to top">
+                    Back to top
+                    <span aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 19V5M6 11l6-6 6 6" />
+                        </svg>
+                    </span>
+                </a>
+            </div>
+
+            <div class="footer-wordmark" aria-hidden="true">FormFit AI</div>
+        </div>
+    </footer>
+
+    <script type="module" src="nav-auth.js"></script>
+    <script type="module" src="history.js"></script>
 </body>
+
 </html>

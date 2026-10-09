@@ -1,0 +1,1030 @@
+/* ============================================================
+   HISTORY PAGE  (loads after style.css)
+============================================================ */
+
+.history-page {
+    width: min(var(--max-width), calc(100% - 48px));
+    margin: 0 auto;
+    padding: 56px 0 110px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* ---------- Intro ---------- */
+
+.hist-intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 44px;
+}
+
+.hist-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+}
+
+.hist-eyebrow::before {
+    content: "";
+    width: 30px;
+    height: 2px;
+    background: var(--yellow);
+}
+
+.hist-intro h1 {
+    margin: 0;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: clamp(42px, 5vw, 68px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.hist-intro h1 em {
+    display: block;
+    color: var(--green);
+    font-style: italic;
+}
+
+.hist-lead {
+    max-width: 480px;
+    margin: 20px 0 0;
+    color: var(--text-muted);
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+.hist-note {
+    margin: 10px 0 0;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.hist-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 200px;
+}
+
+.hist-filter span,
+.hist-label {
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.hist-filter select {
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--white);
+    color: var(--navy);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ---------- Stats ---------- */
+
+.hist-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.hist-stat {
+    padding: 24px 26px;
+    border-radius: 22px;
+    border: 1px solid rgba(12, 44, 71, 0.06);
+    box-shadow: var(--shadow-soft);
+}
+
+.hist-stat:nth-child(1) {
+    background: linear-gradient(160deg, #e6f5f1, #f6fbf9 70%);
+}
+
+.hist-stat:nth-child(2) {
+    background: linear-gradient(160deg, #fdf0e2, #fffaf4 70%);
+}
+
+.hist-stat:nth-child(3) {
+    background: linear-gradient(160deg, #e6f0fb, #f6f9fe 70%);
+}
+
+.hist-stat:nth-child(4) {
+    background: linear-gradient(160deg, #fdf0e2, #fffaf4 70%);
+}
+
+.hist-stat span {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.hist-stat strong {
+    display: block;
+    margin-top: 10px;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 44px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+/* ---------- Chart ---------- */
+
+.hist-chart-card {
+    margin-bottom: 52px;
+    padding: 30px 32px 22px;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(12, 44, 71, 0.05);
+    background:
+        radial-gradient(420px 260px at 90% 0%, rgba(151, 211, 205, 0.35), transparent 70%),
+        var(--white);
+    box-shadow: var(--shadow-soft);
+}
+
+.hist-card-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.hist-card-head h2 {
+    margin: 6px 0 0;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+}
+
+.hist-card-head small {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+#chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.c-grid {
+    stroke: rgba(12, 44, 71, 0.08);
+    stroke-dasharray: 3 5;
+}
+
+.c-line {
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.c-dot {
+    fill: var(--yellow);
+    stroke: #fff;
+    stroke-width: 3;
+}
+
+.c-txt {
+    fill: var(--text-muted);
+    font: 600 11px Manrope, sans-serif;
+}
+
+.c-one {
+    padding: 30px 0;
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 14px;
+}
+
+/* ---------- Session cards ---------- */
+
+.hist-list {
+    display: grid;
+    gap: 16px;
+}
+
+.hist-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 28px;
+    padding: 24px 28px;
+    border-radius: 24px;
+    border: 1px solid rgba(12, 44, 71, 0.06);
+    background: var(--white);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hist-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-card);
+}
+
+.hist-score {
+    width: 92px;
+    height: 92px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle, #fff 0 62%, transparent 63%),
+        conic-gradient(var(--tier) calc(var(--s) * 1%), rgba(12, 44, 71, 0.08) 0);
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 28px;
+    letter-spacing: -0.03em;
+}
+
+.hist-card[data-tier="high"] {
+    --tier: var(--green);
+}
+
+.hist-card[data-tier="mid"] {
+    --tier: var(--yellow);
+}
+
+.hist-card[data-tier="low"] {
+    --tier: #c0564b;
+}
+
+.hist-main h3 {
+    margin: 0 0 6px;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+}
+
+.hist-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.hist-chip {
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: var(--mint);
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hist-reps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+
+.hist-reps span {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--cream);
+    color: var(--text-dark);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.hist-notes {
+    margin: 12px 0 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.hist-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.hist-icon-btn {
+    min-height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--navy);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.hist-icon-btn:hover {
+    background: var(--cream);
+}
+
+.hist-icon-btn.danger:hover {
+    background: #fbeceb;
+    color: #a8372c;
+}
+
+/* ---------- Empty ---------- */
+
+.hist-empty {
+    max-width: 520px;
+    margin: 30px auto 0;
+    padding: 56px 40px;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(160deg, #e6f5f1, #f6fbf9 70%);
+    text-align: center;
+    box-shadow: var(--shadow-soft);
+}
+
+.hist-empty-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: #fff;
+    color: var(--navy);
+    box-shadow: 0 8px 20px rgba(12, 44, 71, 0.08);
+}
+
+.hist-empty-icon svg {
+    width: 30px;
+    height: 30px;
+}
+
+.hist-empty h2 {
+    margin: 0 0 10px;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+}
+
+.hist-empty p {
+    margin: 0 0 26px;
+    color: var(--text-muted);
+    line-height: 1.65;
+}
+
+/* ---------- Dialogs ---------- */
+
+.hist-dialog {
+    width: min(460px, calc(100% - 40px));
+    padding: 30px;
+    border: 0;
+    border-radius: 26px;
+    background: var(--white);
+    color: var(--text-dark);
+    box-shadow: 0 30px 80px rgba(12, 44, 71, 0.3);
+}
+
+.hist-dialog::backdrop {
+    background: rgba(12, 44, 71, 0.45);
+    backdrop-filter: blur(3px);
+}
+
+.hist-dialog h3 {
+    margin: 0 0 16px;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 500;
+}
+
+.hist-dialog p {
+    margin: 0 0 4px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.hist-dialog label {
+    display: block;
+    margin-bottom: 16px;
+    color: var(--green);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.hist-dialog input,
+.hist-dialog textarea {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--cream);
+    color: var(--navy);
+    font: inherit;
+    font-size: 15px;
+    letter-spacing: 0;
+    text-transform: none;
+    resize: vertical;
+}
+
+.hist-dialog input:focus,
+.hist-dialog textarea:focus {
+    outline: 2px solid var(--aqua);
+    border-color: transparent;
+}
+
+.hist-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.hist-danger {
+    border: 0;
+    background: #c0564b;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 950px) {
+    .hist-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hist-card {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .hist-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .history-page {
+        padding: 36px 0 80px;
+    }
+
+    .hist-intro {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hist-stat {
+        padding: 18px;
+    }
+
+    .hist-stat strong {
+        font-size: 34px;
+    }
+
+    .hist-chart-card {
+        padding: 22px 18px 16px;
+    }
+
+    .hist-card {
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .hist-score {
+        width: 74px;
+        height: 74px;
+        font-size: 23px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hist-card {
+        transition: none;
+    }
+
+    .hist-card:hover {
+        transform: none;
+    }
+}
+
+
+/* ============================================================
+   PREMIUM POLISH (overrides, keep at the end of the file)
+============================================================ */
+
+/* ---------- Intro as a panel (same language as the Progress section) ---------- */
+
+.hist-intro {
+    position: relative;
+    overflow: hidden;
+    align-items: flex-end;
+    margin-bottom: 26px;
+    padding: 64px 68px;
+    border-radius: 36px;
+    border: 1px solid rgba(12, 44, 71, 0.05);
+    background:
+        radial-gradient(520px 380px at 85% 20%, rgba(151, 211, 205, 0.55), transparent 70%),
+        radial-gradient(420px 320px at 100% 100%, rgba(253, 226, 196, 0.55), transparent 70%),
+        var(--mint);
+}
+
+.hist-intro::before,
+.hist-intro::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(45, 86, 82, 0.14);
+    pointer-events: none;
+}
+
+.hist-intro::before {
+    width: 560px;
+    height: 560px;
+    right: -120px;
+    top: -200px;
+}
+
+.hist-intro::after {
+    width: 360px;
+    height: 360px;
+    right: 40px;
+    top: -90px;
+    border-color: rgba(45, 86, 82, 0.09);
+}
+
+.hist-intro>* {
+    position: relative;
+    z-index: 2;
+}
+
+.hist-intro h1 {
+    font-size: clamp(40px, 4.6vw, 62px);
+}
+
+.hist-filter select {
+    min-height: 52px;
+    padding: 0 20px;
+    border-color: transparent;
+    box-shadow: 0 12px 28px rgba(12, 44, 71, 0.10);
+}
+
+/* ---------- Stats ---------- */
+
+.hist-stat {
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hist-stat::before {
+    content: "";
+    display: block;
+    width: 22px;
+    height: 2px;
+    margin-bottom: 16px;
+    background: var(--yellow);
+}
+
+.hist-stat:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+}
+
+/* ---------- Chart ---------- */
+
+.hist-chart-card {
+    padding: 34px 36px 24px;
+    box-shadow: var(--shadow-card);
+}
+
+.c-line {
+    stroke-width: 3.5;
+    filter: drop-shadow(0 6px 8px rgba(45, 86, 82, 0.25));
+}
+
+.c-dot {
+    r: 5.5;
+}
+
+.c-dot-last {
+    fill: var(--navy);
+    stroke: var(--yellow);
+    stroke-width: 4;
+}
+
+.c-halo {
+    fill: rgba(226, 165, 77, 0.22);
+}
+
+/* ---------- Session cards ---------- */
+
+.hist-card {
+    position: relative;
+    overflow: hidden;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    gap: 32px;
+    padding: 26px 32px 26px 30px;
+    border-radius: 28px;
+}
+
+.hist-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    background: var(--tier);
+}
+
+.hist-card::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    top: -80px;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(151, 211, 205, 0.22), transparent 70%);
+    pointer-events: none;
+}
+
+.hist-card>* {
+    position: relative;
+    z-index: 1;
+}
+
+.hist-score {
+    width: 100px;
+    height: 100px;
+    font-size: 32px;
+    box-shadow: 0 10px 24px rgba(12, 44, 71, 0.10);
+}
+
+.hist-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.hist-title-row h3 {
+    margin: 0;
+}
+
+.hist-latest {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--navy);
+    color: var(--yellow);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.hist-delta {
+    font-weight: 800;
+}
+
+.hist-delta.up {
+    color: var(--green);
+}
+
+.hist-delta.down {
+    color: #c0564b;
+}
+
+.hist-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 10px;
+}
+
+.hist-metrics div {
+    min-width: 84px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    background: var(--cream);
+}
+
+.hist-metrics span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.hist-metrics strong {
+    display: block;
+    margin-top: 4px;
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+.hist-actions {
+    flex-direction: column;
+}
+
+@media (max-width: 1100px) {
+    .hist-card {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .hist-metrics {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hist-actions {
+        grid-column: 1 / -1;
+        flex-direction: row;
+    }
+}
+
+@media (max-width: 600px) {
+    .hist-intro {
+        padding: 40px 26px;
+        border-radius: 26px;
+    }
+
+    .hist-score {
+        width: 80px;
+        height: 80px;
+        font-size: 26px;
+    }
+}
+
+
+/* ============================================================
+   EXTRA POLISH: spotlight, best line, focus line, entrance
+============================================================ */
+
+.hist-side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.hist-filter {
+    min-width: 0;
+}
+
+.hist-spot {
+    padding: 24px 26px;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 22px 50px rgba(12, 44, 71, 0.12);
+}
+
+.hist-spot:empty {
+    display: none;
+}
+
+.hist-spot-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 14px 0 18px;
+}
+
+.hist-spot-row strong {
+    color: var(--navy);
+    font-family: var(--font-serif);
+    font-size: 56px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.05em;
+}
+
+.hist-spot-row b {
+    display: block;
+    color: var(--green);
+    font-size: 15px;
+}
+
+.hist-spot-row small {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.hist-spot-foot {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 14px;
+    border-top: 1px solid rgba(12, 44, 71, 0.09);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.hist-spot-foot b {
+    color: var(--navy);
+    font-size: 15px;
+    margin-right: 4px;
+}
+
+.c-best {
+    stroke: var(--yellow);
+    stroke-width: 1.5;
+    stroke-dasharray: 5 6;
+}
+
+.c-best-txt {
+    fill: #b9801f;
+}
+
+.hist-verdict {
+    color: var(--green);
+    font-weight: 800;
+}
+
+.hist-focus {
+    margin: 12px 0 0;
+    color: var(--text-dark);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.hist-focus b {
+    margin-right: 10px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(226, 165, 77, 0.22);
+    color: #9a6416;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+@keyframes histIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.hist-card {
+    animation: histIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.hist-stat {
+    animation: histIn 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.hist-stat:nth-child(2) {
+    animation-delay: 80ms;
+}
+
+.hist-stat:nth-child(3) {
+    animation-delay: 160ms;
+}
+
+.hist-stat:nth-child(4) {
+    animation-delay: 240ms;
+}
+
+@media (max-width: 950px) {
+    .hist-intro {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .hist-side {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .hist-card,
+    .hist-stat {
+        animation: none;
+    }
+}
+
+
+/* ============================================================
+   SEGMENTED FILTER + FINAL TOUCHES
+============================================================ */
+
+.hist-side {
+    justify-content: flex-end;
+}
+
+.hist-seg {
+    display: flex;
+    padding: 5px;
+    gap: 4px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 12px 28px rgba(12, 44, 71, 0.08);
+}
+
+.hist-seg button {
+    flex: 1;
+    min-height: 42px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 750;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hist-seg button:hover {
+    color: var(--navy);
+}
+
+.hist-seg button.is-on {
+    background: var(--navy);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(12, 44, 71, 0.25);
+}
+
+.hist-seg button:focus-visible {
+    outline: 2px solid var(--aqua);
+    outline-offset: 2px;
+}
+
+.hist-delta.flat {
+    color: var(--text-muted);
+}
+
+.c-best-txt {
+    font-weight: 800;
+}
+
+.hist-chart-card .hist-card-head small {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--cream);
+    font-weight: 700;
+}
+
+/* "Already have an account?" under the empty-state button */
+.hist-empty-login {
+    margin: 20px 0 0 !important;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.hist-empty-login a {
+    color: var(--navy);
+    font-weight: 800;
+    border-bottom: 2px solid var(--yellow);
+}
+
+
+/* centre the edit / delete dialogs (global reset removes margin: auto) */
+.hist-dialog {
+    margin: auto;
+}
